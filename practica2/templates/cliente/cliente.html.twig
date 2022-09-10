@@ -34,88 +34,15 @@ const crearProducto = "{{ path('crearProducto') }}";
 	<div id="app">
 
 		<div class="container" style="margin-bottom:20%;">
-			<br>
-			<br>
-			<div class="contenedor">
-				<div class="card" style="width: 60%">
-					<form @submit.prevent="crearCliente">
-
-						<div class="row" style="text-align: center;margin:1%">
-							<div class="col-12">
-								<br>
-								<br>
-								<h3>Registro de Clientes</h3>
-							</div>
-
-							<div class="col-6" style="text-align:right">
-								<p>Nombre del cliente</p>
-							</div>
-							<div class="col-6" style="text-align:left">
-								<input v-model="formClientes.nombre" class="form-control" type="text"/>
-							</div>
-
-							<div class="col-6" style="text-align:right">
-								<p>Correo electronico Cliente</p>
-							</div>
-							<div class="col-6" style="text-align:left">
-								<input v-model="formClientes.correo" class="form-control" type="email"/>
-							</div>
-
-							<div class="col-6" style="text-align:right">
-								<p>Región</p>
-							</div>
-							<div class="col-6" style="text-align:left">
-								<input v-model="formClientes.correo" class="form-control" type="email"/>
-							</div>
 
 
-							<div class="col-6" style="text-align:right">
-								<p>Departamento</p>
-							</div>
-							<div class="col-6" style="text-align:left">
-								<input v-model="formClientes.correo" class="form-control" type="email"/>
-							</div>
-
-
-							<div class="col-12">
-								<br>
-								<button class="btn btn-success">Crear Registro</button>
-							</div>
-						</div>
-					</form>
-					<br>
-					<br>
-				</div>
+			<div style="text-align:center;margin:5%">
+				<h1>Base de datos Clientes</h1>
 			</div>
-			<br>
-			<br>
-			<br>
-
-			{# <table class="table table-striped" style="text-align: center;border: 1px;">
-																																											<tbody>
-																																												<tr v-for="departamento in departamentos">
-																																													<td>
-																																														<div>${departamento.region}</div>
-																																													</td>
-																																												</tr>
-																																											</tbody>
-																																										</table> #}
-
-
-			{# <table class="table table-striped" style="text-align: center;border: 1px;">
-																																											<tbody>
-																																												<tr v-for="departamento in departamentos">
-																																													<td>
-																																														<div>${region}</div>
-																																													</td>
-																																												</tr>
-																																											</tbody>
-																																										</table> #}
-
-
-				<div style="text-align:center;margin:5%"> <h4>Base de datos Clientes</h4>
+	
+			<div>
+				<button @click="nuevoCliente(1)" class="btn btn-success">Crear Cliente</button>
 			</div>
-			<br>
 			<br>
 
 
@@ -125,15 +52,45 @@ const crearProducto = "{{ path('crearProducto') }}";
 						<th>ID</th>
 						<th>NOMBRE</th>
 						<th>CORREO</th>
-						<th>REGION</th>
 						<th>DEPARTAMENTO</th>
+						<th>MUNICIPIO</th>
 						<th>GESTIONAR PEDIDOS</th>
-						<th >ACCIONES</th>
+						<th colspan="3">ACCIONES</th>
 					</tr>
 
 					<tr></tr>
 				</thead>
 				<tbody>
+
+					<tr v-if="nuevoC==1" >
+						<td></td>
+
+						<td>
+							<input v-model="formClientes.nombre" class="form-control" type="text"/>
+						</td>
+						<td><input v-model="formClientes.correo" class="form-control" type="email"/>
+						</td>
+						<td>
+					
+							<select class="form-select" v-model="formClientes.departamento">
+								<option selected></option>
+								<option v-for="departamento in departamentos"> ${departamento.nombre}</option>
+							</select>
+						</td>
+						<td>
+							<select v-if="formClientes.departamento" class="form-select" v-model="formClientes.municipio">
+								<option selected></option>
+								<option v-if="dane.departamento == formClientes.departamento" v-for="dane in dane"> ${dane.municipio}</option>
+							</select>
+						</td>
+						<td></td>
+						<td colspan="3">
+							<button @click="crearCliente" class="btn btn-success">Crear</button>
+							<button @click="nuevoCliente(0)" class="btn btn-danger">Cancelar</button>
+						</td>
+
+
+					</tr>
 					<tr v-for="cliente in clientes">
 						<td>
 							<div>${cliente.id}</div>
@@ -148,31 +105,31 @@ const crearProducto = "{{ path('crearProducto') }}";
 						</td>
 
 						<td>
-							<div v-if="estadoId!=cliente.id">${cliente.correo}</div>
-							<input v-else-if="estadoId==cliente.id" v-model="cliente.correo" type="text">
+							<div v-if="estadoId!=cliente.id">${cliente.departamento}</div>
+							<input v-else-if="estadoId==cliente.id" v-model="cliente.departamento" type="text">
 						</td>
 
 						<td>
-							<div v-if="estadoId!=cliente.id">${cliente.correo}</div>
-							<input v-else-if="estadoId==cliente.id" v-model="cliente.correo" type="text">
+							<div v-if="estadoId!=cliente.id">${cliente.municipio}</div>
+							<input v-else-if="estadoId==cliente.id" v-model="cliente.municipio" type="text">
 						</td>
 
 
 						<td>
-							<a  href="/pedido" type="button" class="btn btn-success">
-								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewbox="0 0 16 16">
-									<path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-								</svg>
-							</a>
-						</td>
-
-						{# <td>
-							<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCrearPedido">
+							<button @click="Pedido(cliente.id)" type="button" class="btn btn-success">
 								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewbox="0 0 16 16">
 									<path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
 								</svg>
 							</button>
-						</td> #}
+						</td>
+
+						{# <td>
+																			<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCrearPedido">
+																				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewbox="0 0 16 16">
+																					<path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+																				</svg>
+																			</button>
+																		</td> #}
 
 						<td>
 							<button v-if="estadoId!=cliente.id" type="button" @click="editCliente(1,cliente.id,0)" class="btn btn-warning">Editar</button>
@@ -200,7 +157,8 @@ const crearProducto = "{{ path('crearProducto') }}";
 
 							<div class="row" style="text-align: center;margin:1%">
 								<div class="col-12">
-									<h6>Cliente: </h6>
+									<h6>Cliente:
+									</h6>
 									<br>
 								</div>
 							</div>
@@ -236,9 +194,10 @@ const crearProducto = "{{ path('crearProducto') }}";
 									</div>
 									<div class="col-12" style="text-align:center">
 										<br>
-										<div style="background-color:#33C4FF;"> 
-										<strong>Agrega los productos</strong> </div>
-										
+										<div style="background-color:#33C4FF;">
+											<strong>Agrega los productos</strong>
+										</div>
+
 										<br>
 									</div>
 

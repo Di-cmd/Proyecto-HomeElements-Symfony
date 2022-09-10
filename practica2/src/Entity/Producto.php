@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource; 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\ProductoRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -34,17 +34,24 @@ class Producto
      */
     private $cantidad;
 
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $precio;
+
+
     /**
      * @ORM\ManyToOne(targetEntity=Categoria::class, inversedBy="producto",cascade={"persist"}))
      */
     private $categoria;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Pedido::class, inversedBy="producto")
+     * @ORM\ManyToOne(targetEntity=Pedido::class, inversedBy="productos")
      */
     private $pedido;
 
- 
+
 
 
     public function getId(): ?int
@@ -88,6 +95,22 @@ class Producto
         return $this;
     }
 
+
+
+    public function getPrecio(): ?string
+    {
+        return $this->precio;
+    }
+
+    public function setPrecio(string $precio): self
+    {
+        $this->precio = $precio;
+
+        return $this;
+    }
+
+
+
     public function getCategoria(): ?Categoria
     {
         return $this->categoria;
@@ -111,7 +134,5 @@ class Producto
 
         return $this;
     }
-
-
 
 }

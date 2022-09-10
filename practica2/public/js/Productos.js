@@ -3,6 +3,7 @@ let formProductos = {
   nombre: "",
   codigo: 0,
   cantidad: 0,
+  precio: 0,
   categoria:"",
 }
 
@@ -17,12 +18,21 @@ new Vue({
     estadoEditar: 0,
     estadoId: 0,
     producto: 0,
+    nuevoP: 0,
     
   },
   mounted() {
     this.getProductos();
   },
   methods: {
+
+
+    async nuevoProducto(id) {
+      this.nuevoP=id; 
+  },
+
+
+
     async getProductos() {
         let productos= await axios.get('productoJSON');
         this.productos = productos.data.productos
@@ -38,6 +48,15 @@ new Vue({
       this.mensajeGuardado = formulario["mensaje"];
       this.getProductos();
       this.formProductos = JSON.parse(JSON.stringify(formProductos))
+      this.nuevoP=0;
+      // limpiar el formulario:
+      this.formProductos.nombre=""
+      this.formProductos.codigo=0
+      this.formProductos.cantidad=0
+      this.formProductos.precio=0
+      this.formProductos.categoria=""
+
+
     },
 
     //Para el metodo eliminar Tengo que mandar el parametro, por medio de la ruta

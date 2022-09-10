@@ -42,11 +42,13 @@ class Pedido
     /**
      * @ORM\OneToMany(targetEntity=Producto::class, mappedBy="pedido")
      */
-    private $producto;
+    private $productos;
+
 
     public function __construct()
     {
         $this->producto = new ArrayCollection();
+        $this->productos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -107,15 +109,15 @@ class Pedido
     /**
      * @return Collection<int, Producto>
      */
-    public function getProducto(): Collection
+    public function getProductos(): Collection
     {
-        return $this->producto;
+        return $this->productos;
     }
 
     public function addProducto(Producto $producto): self
     {
-        if (!$this->producto->contains($producto)) {
-            $this->producto[] = $producto;
+        if (!$this->productos->contains($producto)) {
+            $this->productos[] = $producto;
             $producto->setPedido($this);
         }
 
@@ -124,7 +126,7 @@ class Pedido
 
     public function removeProducto(Producto $producto): self
     {
-        if ($this->producto->removeElement($producto)) {
+        if ($this->productos->removeElement($producto)) {
             // set the owning side to null (unless already changed)
             if ($producto->getPedido() === $this) {
                 $producto->setPedido(null);
@@ -133,4 +135,6 @@ class Pedido
 
         return $this;
     }
+
+ 
 }

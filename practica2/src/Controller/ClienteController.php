@@ -45,6 +45,8 @@ class ClienteController extends AbstractController
                 'id'=>$clientesAlmacenados[$i]->getId(),
                 'nombre'=>$clientesAlmacenados[$i]->getNombre(),
                 'correo'=>$clientesAlmacenados[$i]->getCorreo(),
+                'departamento'=>$clientesAlmacenados[$i]->getDepartamento(),
+                'municipio'=>$clientesAlmacenados[$i]->getMunicipio(),
            ];
         }
         return new JsonResponse(['clientes' => $array]);
@@ -63,6 +65,8 @@ class ClienteController extends AbstractController
         $cliente = new Cliente();
         $cliente->setNombre($data['nombre']);
         $cliente->setCorreo($data['correo']);
+        $cliente->setDepartamento($data['departamento']);
+        $cliente->setMunicipio($data['municipio']);
         $entityManager->persist($cliente);
         $entityManager->flush();
         return new JsonResponse(['mensaje' => "Se creo el cliente con exito"]);
@@ -99,6 +103,8 @@ class ClienteController extends AbstractController
         $entityManager = $this->getDoctrine()->getManager();
         $clienteEditar->setNombre($data['nombre']);
         $clienteEditar->setCorreo($data['correo']);
+        $clienteEditar->setDepartamento($data['departamento']);
+        $clienteEditar->setMunicipio($data['municipio']);
         $entityManager->persist($clienteEditar);
         $entityManager->flush();
         return new JsonResponse(['mensaje' => "Se Edito el cliente con exito"]);

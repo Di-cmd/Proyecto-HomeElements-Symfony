@@ -27,7 +27,7 @@ class ProductoController extends AbstractController
      */
     public function index(): Response
     {
-        return $this->render('producto/index.html.twig');
+        return $this->render('producto/producto.html.twig');
     }
 
 
@@ -64,6 +64,7 @@ class ProductoController extends AbstractController
                 'codigo'=>$productosAlmacenados[$i]->getCodigo(),
                 'categoria'=>$productosAlmacenados[$i]->getCategoria(),
                 'cantidad'=>$productosAlmacenados[$i]->getCantidad(),
+                'precio'=>$productosAlmacenados[$i]->getPrecio(),
            ];
         }
         return new JsonResponse(['productos' => $array]);
@@ -93,8 +94,8 @@ class ProductoController extends AbstractController
         $producto->setNombre($data['nombre']);
         $producto->setCodigo($data['codigo']);
         $producto->setCantidad($data['cantidad']);
+        $producto->setPrecio($data['precio']);
         $producto->setCategoria($categoria);
-     
         $entityManager->persist($producto);
         $entityManager->flush();
 
@@ -135,6 +136,7 @@ class ProductoController extends AbstractController
         $productoEditar->setNombre($data['nombre']);
         $productoEditar->setCodigo($data['codigo']);
         $productoEditar->setCantidad($data['cantidad']);
+        $productoEditar->setPrecio($data['precio']);
         $entityManager->persist($productoEditar);
         $entityManager->flush();
         return new JsonResponse(['mensaje' => "Se Edito el producto con exito"]);

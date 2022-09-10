@@ -31,12 +31,12 @@ const crearProducto = "{{ path('crearProducto') }}";
 
 	<div id="app">
 		<div class="container" style="margin-bottom:10%;">
-			<div class="example-wrapper" style="text-align: center; margin-bottom: 5%;margin-top: 5%;">
+			<div  style="text-align: center; margin-bottom: 5%;margin-top: 5%;">
 				<h1>Inventario de Productos</h1>
 			</div>
 
 			<div>
-				<button class="btn btn-success">Crear Producto</button>
+				<button @click="nuevoProducto(1)"  class="btn btn-success">Crear Producto</button>
 			</div>
 
 
@@ -49,6 +49,7 @@ const crearProducto = "{{ path('crearProducto') }}";
 						<th>NOMBRE</th>
 						<th>CODIGO</th>
 						<th>CATEGORIA</th>
+						<th>PRECIO</th>
 						<th>CANTIDAD DISPONIBLE</th>
 						<th colspan="2">ACCIONES</th>
 					</tr>
@@ -57,7 +58,7 @@ const crearProducto = "{{ path('crearProducto') }}";
 				</thead>
 
 				<tbody>
-					<tr>
+					<tr v-if="nuevoP==1" >
 						<td></td>
 
 						<td>
@@ -77,10 +78,13 @@ const crearProducto = "{{ path('crearProducto') }}";
 							</select>
 						</td>
 
+						<td><input class="form-control" v-model="formProductos.precio" type="number"/></td>
+
 						<td><input class="form-control" v-model="formProductos.cantidad" type="number"/></td>
 
 						<td>
 							<button @click="crearProducto" class="btn btn-success">Crear</button>
+							<button  @click="nuevoProducto(0)" class="btn btn-danger">Cancelar</button>
 						</td>
 					</tr>
 
@@ -95,15 +99,23 @@ const crearProducto = "{{ path('crearProducto') }}";
 						</td>
 						<td>
 							<div v-if="estadoId!=producto.id">${producto.codigo}</div>
-							<input v-else-if="estadoId==producto.id" v-model="producto.codigo" type="text">
+							<input v-else-if="estadoId==producto.id" v-model="producto.codigo" type="number">
 						</td>
 						<td>
-							{# <div v-if="estadoId!=producto.id">${producto.categoria}</div>																																																																							<input v-else-if="estadoId==producto.id" v-model="producto.categoria" type="text"> #}
+							{# <div v-if="estadoId!=producto.id">${producto.categoria}</div>	
+							<input v-else-if="estadoId==producto.id" v-model="producto.categoria" type="text">#}
 						</td>
 
 						<td>
+							<div v-if="estadoId!=producto.id">${producto.precio}</div>
+							<input v-else-if="estadoId==producto.id" v-model="producto.precio" type="number">
+						</td>
+
+
+
+						<td>
 							<div v-if="estadoId!=producto.id">${producto.cantidad}</div>
-							<input v-else-if="estadoId==producto.id" v-model="producto.cantidad" type="text">
+							<input v-else-if="estadoId==producto.id" v-model="producto.cantidad" type="number">
 						</td>
 
 						<td>

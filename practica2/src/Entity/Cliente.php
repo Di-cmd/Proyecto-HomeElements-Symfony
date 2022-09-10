@@ -29,10 +29,24 @@ class Cliente
      */
     private $correo;
 
+        /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $departamento;
+
+
+        /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $municipio;
+
+
     /**
      * @ORM\OneToMany(targetEntity=Pedido::class, mappedBy="cliente")
      */
     private $pedido;
+
+
 
     public function __construct()
     {
@@ -67,6 +81,35 @@ class Cliente
 
         return $this;
     }
+
+
+
+    public function getDepartamento(): ?string
+    {
+        return $this->departamento;
+    }
+
+    public function setDepartamento(string $departamento): self
+    {
+        $this->departamento = $departamento;
+
+        return $this;
+    }
+
+
+
+    public function getMunicipio(): ?string
+    {
+        return $this->municipio;
+    }
+
+    public function setMunicipio(string $municipio): self
+    {
+        $this->municipio = $municipio;
+
+        return $this;
+    }
+
 
     /**
      * @return Collection<int, Pedido>

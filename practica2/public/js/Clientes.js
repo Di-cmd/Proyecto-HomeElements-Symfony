@@ -5,31 +5,31 @@ new Vue({
         formClientes: {
             nombre: "",
             correo:"",
-          },
-
-          formPedido: {
-            codigo: "",
             departamento:"",
             municipio:"",
           },
-
-
-        mensaje:"holaaaa desde vue js para la vista Home ",
         productos:[],
         clientes:[],
         dane: [],
         departamentos: [],
+        municipios: [],
         region: [],
-        departamentoSinRepetir: [],
         estadoEditar: 0,
         estadoId: 0,
         cliente: 0,
+        nuevoC: 0,
     },
     mounted() {
         this.getClientes(),
         this.getDepartamentos() 
     },
     methods: {
+
+
+      async nuevoCliente(id) {
+        this.nuevoC=id; 
+    },
+
 
         async getClientes() {
             let clientes= await axios.get('http://127.0.0.1:8080/clienteJSON');
@@ -38,7 +38,6 @@ new Vue({
        
 
         async getDepartamentos() {
-            
             let departamentos = await axios.get('https://www.datos.gov.co/resource/xdk5-pm3f.json')
             this.dane = departamentos.data
             
@@ -51,18 +50,24 @@ new Vue({
                 }
                 this.departamentos.push(data)
               }
-            })
+            }) 
 
-            console.log(this.departamentos)
+           
         },
             
-
-
         async crearCliente() {
             let crearCliente = await axios.post("http://127.0.0.1:8080/crearCliente", this.formClientes);
             this.mensajeGuardado = crearCliente.data.mensaje;
-
+            this.nuevoC=0;
             this.getClientes();
+
+            this.formClientes.nombre=""
+            this.formClientes.correo=""
+            this.formClientes.departamento=""
+            this.formClientes.municipio=""
+
+
+
           },
 
 
@@ -91,12 +96,23 @@ new Vue({
           this.getClientes();
         } 
         else {
-          console.log("este es el cliente", this.cliente);
           this.getClientes();
         }
   
       },
+
+
+
+      async Pedido(idCliente) {
+
+        let pedido = await axios.post("http://127.0.0.1:8080/pedido/" + idCliente)
+        pedido = pedido.data;
+        this.mensajeGuardado = pedido.data.mensaje;
+      },
+
+
     },
+
     computed: {},
   });
   

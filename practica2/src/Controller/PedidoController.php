@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Cliente;
 use App\Entity\Pedido;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,6 +22,21 @@ class PedidoController extends AbstractController
             'controller_name' => 'PedidoController',
         ]);
     }
+
+
+
+
+
+    /**
+     * @Route("/pedido/{id}", name="pedidoId")
+     */
+
+    public function pedido( Cliente $cliente)
+    {
+        return new JsonResponse(['mensaje' =>$cliente]);
+    }
+
+
 
 
 
@@ -79,7 +95,7 @@ class PedidoController extends AbstractController
      * @Route("/deletePedido/{id}", name="deletePedido")
      */
 
-    public function deleteaCliente(Pedido $pedido, ManagerRegistry $doctrine)
+    public function deletePedido(Pedido $pedido, ManagerRegistry $doctrine)
     {
         $pedido;
         $entityManager = $doctrine->getManager();
@@ -96,7 +112,7 @@ class PedidoController extends AbstractController
     /**
      * @Route("/editarPedido", name="editarPedido")
      */
-    public function editarCliente(Request $request): Response
+    public function editarPedido(Request $request): Response
     {
         $data=json_decode($request->getContent(), true);
         $pedidoEditar = $this->getDoctrine()->getRepository(Pedido::class)->find($data['id']);
