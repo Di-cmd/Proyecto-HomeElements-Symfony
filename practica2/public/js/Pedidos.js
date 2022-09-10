@@ -7,9 +7,12 @@ new Vue({
       codigo: "",
       departamento: "",
       municipio: "",
+      producto:[]
     },
-
-
+    productos: [],
+    dane: [],
+    departamentos: [],
+    municipios: [],
     estadoEditar: 0,
     estadoId: 0,
     pedido: 0,
@@ -19,6 +22,8 @@ new Vue({
   mounted() {
     this.getProductos();
     this.getPedidos();
+    this.getClientes(), 
+    this.getDepartamentos();
   },
   methods: {
     getProductos() {
@@ -34,6 +39,26 @@ new Vue({
       this.pedidos = pedidos.data.pedidos;
     },
 
+    async getDepartamentos() {
+      let departamentos = await axios.get(
+        "https://www.datos.gov.co/resource/xdk5-pm3f.json"
+      );
+      this.dane = departamentos.data;
+
+      this.dane.forEach((dane) => {
+        let filtro = this.departamentos.filter(
+          (item) => item.codigo == dane.c_digo_dane_del_departamento
+        );
+        if (filtro.length == 0) {
+          let data = {
+            codigo: dane.c_digo_dane_del_departamento,
+            nombre: dane.departamento,
+          };
+          this.departamentos.push(data);
+        }
+      });
+    },
+
     async crearPedido() {
       let crearPedido = await axios.post(
         "http://127.0.0.1:8080/crearPedido",
@@ -41,6 +66,11 @@ new Vue({
       );
       this.mensajeGuardado = crearPedido.data.mensaje;
       this.getPedidos();
+    },
+
+    async getClientes() {
+      let clientes = await axios.get("http://127.0.0.1:8080/clienteJSON");
+      this.clientes = clientes.data.clientes;
     },
 
     async editPedido(estado, idPedido, pedido) {

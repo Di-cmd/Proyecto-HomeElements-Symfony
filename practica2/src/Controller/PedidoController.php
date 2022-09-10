@@ -25,22 +25,6 @@ class PedidoController extends AbstractController
 
 
 
-
-
-    /**
-     * @Route("/pedido/{id}", name="pedidoId")
-     */
-
-    public function pedido( Cliente $cliente)
-    {
-        return new JsonResponse(['mensaje' =>$cliente]);
-    }
-
-
-
-
-
-
     //------------------------------------------------------------------------------------------------------
     //Este es el backend
     //------------------------------------------------------------------------------------------------------  
@@ -123,6 +107,17 @@ class PedidoController extends AbstractController
         $entityManager->persist($pedidoEditar);
         $entityManager->flush();
         return new JsonResponse(['mensaje' => "Se Edito el pedido con exito"]);
+    }
+
+
+
+
+    /**
+     * @Route("/pedidoCliente/{id}", name="pedidoId")
+     */
+    public function pedido( Cliente $cliente, Request $request)
+    {
+        return new JsonResponse(['mensaje' => "Accede a la ruta con exito"]);
     }
 
 

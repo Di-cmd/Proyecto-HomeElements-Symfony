@@ -103,11 +103,12 @@ new Vue({
 
 
 
-      async Pedido(idCliente) {
+      async Pedido(id) {
 
-        let pedido = await axios.post("http://127.0.0.1:8080/pedido/" + idCliente)
+        let pedido = await axios.post("http://127.0.0.1:8080/pedidoCliente/"+id )
         pedido = pedido.data;
         this.mensajeGuardado = pedido.data.mensaje;
+        
       },
 
 

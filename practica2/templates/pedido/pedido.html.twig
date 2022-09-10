@@ -22,6 +22,13 @@ endblock %}
 			font: 18px / 1.5 sans-serif;
 			margin-bottom: 5%;
 		}
+
+		.contenedor {
+			text-align: center;
+			margin-bottom: 5%;
+			margin-left: 5%;
+			margin-right: 5%;
+		}
 	</style>
 
 	{#  Desde aca estoy llamando al script que permite conectar el Vue JS   #}
@@ -43,9 +50,8 @@ const crearProducto = "{{ path('crearProducto') }}";
 			</div>
 			<br>
 
-
 			<div class="contenedor">
-				<div class="card" style="width: 60%">
+				<div class="card">
 					<form @submit.prevent="crearPedido">
 
 						<div class="row" style="text-align: center;margin:1%">
@@ -53,102 +59,137 @@ const crearProducto = "{{ path('crearProducto') }}";
 								<br>
 								<br>
 								<h3>Crear Nuevo Pedido</h3>
+								<br>
+								<br>
 							</div>
 
-							<div class="col-6" style="text-align:right">
+							<div class="col-3">
 								<p>Codigo del pedido</p>
 							</div>
-							<div class="col-6" style="text-align:left">
+							<div class="col-3">
 								<input v-model="formPedidos.codigo" class="form-control" type="text"/>
 							</div>
 
-							<div class="col-6" style="text-align:right">
-								<p>Departamento</p>
-							</div>
-							<div class="col-6" style="text-align:left">
-								<input v-model="formPedidos.departamento" class="form-control" type="text"/>
-							</div>
 
-							<div class="col-6" style="text-align:right">
+							<div class="col-3">
 								<p>Municipio</p>
 							</div>
-							<div class="col-6" style="text-align:left">
-								<input v-model="formPedidos.municipio" class="form-control" type="text"/>
+							<div class="col-3">
+								<select class="form-select" v-model="formPedidos.departamento">
+									<option selected></option>
+									<option v-for="departamento in departamentos">
+										${departamento.nombre}</option>
+								</select>
 							</div>
 
 
-							{# <div class="col-6" style="text-align:right">
-															<p>Productos</p>
-														</div>
-														<div class="col-6" style="text-align:left">
-															<input   v-model="formClientes.nombre" class="form-control" type="email"/>
-														</div> #}
-
-
-							<div class="col-12">
-								<br>
-								<button class="btn btn-success">Crear Pedido</button>
+							<div class="col-3">
+								<p>Departamento</p>
+							</div>
+							<div class="col-3">
+								<select v-if="formPedidos.departamento" class="form-select" v-model="formPedidos.municipio">
+									<option selected></option>
+									<option v-if="dane.departamento == formPedidos.departamento" v-for="dane in dane">
+										${dane.municipio}</option>
+								</select>
 							</div>
 						</div>
-					</form>
-					<br>
-					<br>
-				</div>
+
+						<div class="contenedor">
+							<table class="table table-striped" style="text-align: center;width:100%">
+								<thead style="background-color:#9BA9A6;color:aliceblue">
+									<tr>
+										<th>NOMBRE PRODUCTO</th>
+										<th>CANTIDAD</th>
+										<th >ACCIONES</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>
+											<select class="form-select">
+												<option selected></option>
+												<option v-for="producto in productos">
+													${producto.nombre}</option>
+											</select>
+										</td>
+
+										<td>
+											<input v-model="formPedidos.codigo" class="form-control" type="number"/>
+										</td>
+
+
+										<td>
+											<button class="btn btn-dark">Agregar Producto</button>
+										</td>
+
+									</tr>
+								</tbody>
+							</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
+		</form>
+	
 
-
+		<div style="text-align:center;">
 			<br>
-			<br>
-			<div style="text-align:center ;">
-				<h4>
-					Seguimiento de los Pedidos</h4>
-			</div>
-			<br>
-
-			<table class="table table-striped" style="text-align: center;border: 1px;width:100%">
-				<thead style="background-color:black;color:aliceblue">
-					<tr>
-						<th>ID</th>
-						<th>Codigo del pedido</th>
-						<th>Departamento</th>
-						<th>Municipio</th>
-						<th>ACCIONES</th>
-					</tr>
-				</thead>
-
-				<tbody>
-					<tr v-for="pedido in pedidos">
-						<td>
-							<div>${pedido.id}</div>
-						</td>
-						<td>
-							<div v-if="estadoId!=pedido.id">${pedido.codigo}</div>
-							<input v-else-if="estadoId==pedido.id" v-model="pedido.codigo" type="text">
-						</td>
-                        <td>
-							<div v-if="estadoId!=pedido.id">${pedido.departamento}</div>
-							 <input v-else-if="estadoId==pedido.id" v-model="pedido.departamento" type="text">
-						</td>
-                        <td>
-							<div v-if="estadoId!=pedido.id">${pedido.municipio}</div>
-							 <input v-else-if="estadoId==pedido.id" v-model="pedido.municipio" type="text"> 
-						</td>
-						<td>
-							<button v-if="estadoId!=pedido.id"  type="button" @click="editPedido(1,pedido.id,0)" class="btn btn-warning">Editar</button>
-							<button v-if="estadoId!=pedido.id"  @click="deletePedido(pedido.id)" class="btn btn-danger">Eliminar</button>
-
-							<button v-if="estadoId==pedido.id" @click="editPedido(0,0,pedido)" class="btn btn-success">Guardar</button>
-							<button v-if="estadoId==pedido.id" @click="editPedido(0,0,0)" class="btn btn-danger">Cancelar</button>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-
-			<br>
-			<br>
-			<br>
+			<button class="btn btn-success">Crear Pedido</button>
 		</div>
-
+		<br>
 
 	</div>
-{% endblock %}
+</div>
+
+
+<br>
+<br>
+<div style="text-align:center ;">
+	<h4>
+		Seguimiento de los Pedidos</h4>
+</div>
+<br>
+
+<table class="table table-striped" style="text-align: center;border: 1px;width:100%">
+	<thead style="background-color:black;color:aliceblue">
+		<tr>
+			<th>ID</th>
+			<th>Codigo del pedido</th>
+			<th>Departamento</th>
+			<th>Municipio</th>
+			<th>ACCIONES</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		<tr v-for="pedido in pedidos">
+			<td>
+				<div>${pedido.id}</div>
+			</td>
+			<td>
+				<div v-if="estadoId!=pedido.id">${pedido.codigo}</div>
+				<input v-else-if="estadoId==pedido.id" v-model="pedido.codigo" type="text">
+			</td>
+			<td>
+				<div v-if="estadoId!=pedido.id">${pedido.departamento}</div>
+				<input v-else-if="estadoId==pedido.id" v-model="pedido.departamento" type="text">
+			</td>
+			<td>
+				<div v-if="estadoId!=pedido.id">${pedido.municipio}</div>
+				<input v-else-if="estadoId==pedido.id" v-model="pedido.municipio" type="text">
+			</td>
+			<td>
+				<button v-if="estadoId!=pedido.id" type="button" @click="editPedido(1,pedido.id,0)" class="btn btn-warning">Editar</button>
+				<button v-if="estadoId!=pedido.id" @click="deletePedido(pedido.id)" class="btn btn-danger">Eliminar</button>
+
+				<button v-if="estadoId==pedido.id" @click="editPedido(0,0,pedido)" class="btn btn-success">Guardar</button>
+				<button v-if="estadoId==pedido.id" @click="editPedido(0,0,0)" class="btn btn-danger">Cancelar</button>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<br>
+<br>
+<br></div></div>{% endblock %}
