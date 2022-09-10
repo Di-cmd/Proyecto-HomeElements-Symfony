@@ -1,0 +1,298 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ProductoController!
+{%
+endblock %}
+
+{% block body %}
+	<style>
+		.example-wrapper {
+			margin: 1em auto;
+			max-width: 800px;
+			width: 95%;
+			font: 18px / 1.5 sans-serif;
+		}
+		.example-wrapper code {
+			background: #F5F5F5;
+			padding: 2px 6px;
+		}
+
+		.titulo {
+			text-align: center;
+			font: 18px / 1.5 sans-serif;
+			margin-bottom: 5%;
+		}
+	</style>
+
+	{#  Desde aca estoy llamando al script que permite conectar el Vue JS   #}
+	<script defer src="{{asset('js/Clientes.js')}}"></script>
+	<script>
+		const productoJSON = "{{ path('productoJSON') }}";
+const crearProducto = "{{ path('crearProducto') }}";
+	</script>
+
+	<div id="app">
+
+		<div class="container" style="margin-bottom:20%;">
+			<br>
+			<br>
+			<div class="contenedor">
+				<div class="card" style="width: 60%">
+					<form @submit.prevent="crearCliente">
+
+						<div class="row" style="text-align: center;margin:1%">
+							<div class="col-12">
+								<br>
+								<br>
+								<h3>Registro de Clientes</h3>
+							</div>
+
+							<div class="col-6" style="text-align:right">
+								<p>Nombre del cliente</p>
+							</div>
+							<div class="col-6" style="text-align:left">
+								<input v-model="formClientes.nombre" class="form-control" type="text"/>
+							</div>
+
+							<div class="col-6" style="text-align:right">
+								<p>Correo electronico Cliente</p>
+							</div>
+							<div class="col-6" style="text-align:left">
+								<input v-model="formClientes.correo" class="form-control" type="email"/>
+							</div>
+
+							<div class="col-6" style="text-align:right">
+								<p>Región</p>
+							</div>
+							<div class="col-6" style="text-align:left">
+								<input v-model="formClientes.correo" class="form-control" type="email"/>
+							</div>
+
+
+							<div class="col-6" style="text-align:right">
+								<p>Departamento</p>
+							</div>
+							<div class="col-6" style="text-align:left">
+								<input v-model="formClientes.correo" class="form-control" type="email"/>
+							</div>
+
+
+							<div class="col-12">
+								<br>
+								<button class="btn btn-success">Crear Registro</button>
+							</div>
+						</div>
+					</form>
+					<br>
+					<br>
+				</div>
+			</div>
+			<br>
+			<br>
+			<br>
+
+			{# <table class="table table-striped" style="text-align: center;border: 1px;">
+																																											<tbody>
+																																												<tr v-for="departamento in departamentos">
+																																													<td>
+																																														<div>${departamento.region}</div>
+																																													</td>
+																																												</tr>
+																																											</tbody>
+																																										</table> #}
+
+
+			{# <table class="table table-striped" style="text-align: center;border: 1px;">
+																																											<tbody>
+																																												<tr v-for="departamento in departamentos">
+																																													<td>
+																																														<div>${region}</div>
+																																													</td>
+																																												</tr>
+																																											</tbody>
+																																										</table> #}
+
+
+				<div style="text-align:center;margin:5%"> <h4>Base de datos Clientes</h4>
+			</div>
+			<br>
+			<br>
+
+
+			<table class="table table-striped" style="text-align: center;border: 1px;width:100%">
+				<thead style="background-color:black;color:aliceblue">
+					<tr>
+						<th>ID</th>
+						<th>NOMBRE</th>
+						<th>CORREO</th>
+						<th>REGION</th>
+						<th>DEPARTAMENTO</th>
+						<th>GESTIONAR PEDIDOS</th>
+						<th >ACCIONES</th>
+					</tr>
+
+					<tr></tr>
+				</thead>
+				<tbody>
+					<tr v-for="cliente in clientes">
+						<td>
+							<div>${cliente.id}</div>
+						</td>
+						<td>
+							<div v-if="estadoId!=cliente.id">${cliente.nombre}</div>
+							<input v-else-if="estadoId==cliente.id" v-model="cliente.nombre" type="text">
+						</td>
+						<td>
+							<div v-if="estadoId!=cliente.id">${cliente.correo}</div>
+							<input v-else-if="estadoId==cliente.id" v-model="cliente.correo" type="text">
+						</td>
+
+						<td>
+							<div v-if="estadoId!=cliente.id">${cliente.correo}</div>
+							<input v-else-if="estadoId==cliente.id" v-model="cliente.correo" type="text">
+						</td>
+
+						<td>
+							<div v-if="estadoId!=cliente.id">${cliente.correo}</div>
+							<input v-else-if="estadoId==cliente.id" v-model="cliente.correo" type="text">
+						</td>
+
+
+						<td>
+							<a  href="/pedido" type="button" class="btn btn-success">
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewbox="0 0 16 16">
+									<path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+								</svg>
+							</a>
+						</td>
+
+						{# <td>
+							<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCrearPedido">
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewbox="0 0 16 16">
+									<path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+								</svg>
+							</button>
+						</td> #}
+
+						<td>
+							<button v-if="estadoId!=cliente.id" type="button" @click="editCliente(1,cliente.id,0)" class="btn btn-warning">Editar</button>
+							<button v-if="estadoId!=cliente.id" @click="deleteCliente(cliente.id)" class="btn btn-danger">Eliminar</button>
+
+							<button v-if="estadoId==cliente.id" @click="editCliente(0,0,cliente)" class="btn btn-success">Guardar</button>
+							<button v-if="estadoId==cliente.id" @click="editCliente(0,0,0)" class="btn btn-danger">Cancelar</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<br>
+			<br>
+			<br>
+
+
+			<!-- Modal de crear un producto-->
+			<div class="modal fade" id="modalCrearPedido" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">Crear nuevo pedido</h5>
+						</div>
+						<div class="modal-body">
+
+							<div class="row" style="text-align: center;margin:1%">
+								<div class="col-12">
+									<h6>Cliente: </h6>
+									<br>
+								</div>
+							</div>
+
+							<form @submit.prevent="">
+
+								<div class="row" style="text-align: center;margin:1%">
+									<div class="col-12">
+										<h3>Nuevo pedido</h3>
+										<br>
+										<br>
+									</div>
+
+									<div class="col-6" style="text-align:center">
+										<p>Codigo del pedido</p>
+									</div>
+									<div class="col-6" style="text-align:left">
+										<input class="form-control" type="text"/>
+									</div>
+
+									<div class="col-6" style="text-align:center">
+										<p>Departamento</p>
+									</div>
+									<div class="col-6" style="text-align:left">
+										<input class="form-control" type="email"/>
+									</div>
+
+									<div class="col-6" style="text-align:center">
+										<p>Municipio</p>
+									</div>
+									<div class="col-6" style="text-align:left">
+										<input class="form-control" type="email"/>
+									</div>
+									<div class="col-12" style="text-align:center">
+										<br>
+										<div style="background-color:#33C4FF;"> 
+										<strong>Agrega los productos</strong> </div>
+										
+										<br>
+									</div>
+
+									<div class="col-2" style="text-align:center">
+										<p>Producto</p>
+									</div>
+									<div class="col-4" style="text-align:left">
+										<input class="form-control" type="email"/>
+									</div>
+									<div class="col-2" style="text-align:center">
+										<p>cantidad</p>
+									</div>
+									<div class="col-4" style="text-align:left">
+										<input class="form-control" type="number"/>
+									</div>
+
+									<div class="col-12" style="text-align:center">
+										<br>
+										<br>
+										<button class="btn btn-warning">Agregar producto</button>
+									</div>
+
+
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button class="btn btn-success">Crear pedido</button>
+								<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+							</div>
+
+						</form>
+					</div>
+				</div>
+			</div>
+
+
+			<!-- Modal de visualizar todos los pedidos-->
+			<div class="modal fade" id="modalVisualizarPedidos" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">Todos los Pedidos</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							tabla de pedidos con los productos bla
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+		</div>
+	{% endblock %}

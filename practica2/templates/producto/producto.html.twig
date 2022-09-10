@@ -1,0 +1,127 @@
+{% extends 'base.html.twig' %}
+{% block title %}Hello ProductoController!
+{%
+endblock %}
+{% block body %}
+	<style>
+		.example-wrapper {
+			margin: 1em auto;
+			max-width: 800px;
+			width: 95%;
+			font: 18px / 1.5 sans-serif;
+		}
+		.example-wrapper code {
+			background: #f5f5f5;
+			padding: 2px 6px;
+		}
+
+		.contenedor {
+			text-align: center;
+			width: 100%;
+		}
+	</style>
+
+	{# Desde aca estoy llamando al script que permite conectar el Vue JS #}
+	<script defer src="{{ asset('js/Productos.js') }}"></script>
+
+	<script>
+		const productoJSON = "{{ path('productoJSON') }}";
+const crearProducto = "{{ path('crearProducto') }}";
+	</script>
+
+	<div id="app">
+		<div class="container" style="margin-bottom:10%;">
+			<div class="example-wrapper" style="text-align: center; margin-bottom: 5%;margin-top: 5%;">
+				<h1>Inventario de Productos</h1>
+			</div>
+
+			<div>
+				<button class="btn btn-success">Crear Producto</button>
+			</div>
+
+
+			<br>
+			<br>
+			<table class="table table-striped" style="text-align: center;border: 1px;">
+				<thead style="background-color:black;color:aliceblue">
+					<tr>
+						<th>ID</th>
+						<th>NOMBRE</th>
+						<th>CODIGO</th>
+						<th>CATEGORIA</th>
+						<th>CANTIDAD DISPONIBLE</th>
+						<th colspan="2">ACCIONES</th>
+					</tr>
+
+					<tr></tr>
+				</thead>
+
+				<tbody>
+					<tr>
+						<td></td>
+
+						<td>
+							<input class="form-control" v-model="formProductos.nombre" type="text"/>
+						</td>
+						<td>
+							<input class="form-control" v-model="formProductos.codigo" type="number"/>
+						</td>
+
+						<td>
+							<select class="form-select" v-model="formProductos.categoria">
+								<option selected></option>
+								<option value="Hogar">Hogar</option>
+								<option value="Electrodomesticos">Electrodomesticos</option>
+								<option value="Tecnologia">Tecnologia</option>
+								<option value="Ropa">Ropa</option>
+							</select>
+						</td>
+
+						<td><input class="form-control" v-model="formProductos.cantidad" type="number"/></td>
+
+						<td>
+							<button @click="crearProducto" class="btn btn-success">Crear</button>
+						</td>
+					</tr>
+
+
+					<tr v-for="producto in productos">
+						<td>
+							<div>${producto.id}</div>
+						</td>
+						<td>
+							<div v-if="estadoId!=producto.id">${producto.nombre}</div>
+							<input v-else-if="estadoId==producto.id" v-model="producto.nombre" type="text">
+						</td>
+						<td>
+							<div v-if="estadoId!=producto.id">${producto.codigo}</div>
+							<input v-else-if="estadoId==producto.id" v-model="producto.codigo" type="text">
+						</td>
+						<td>
+							{# <div v-if="estadoId!=producto.id">${producto.categoria}</div>																																																																							<input v-else-if="estadoId==producto.id" v-model="producto.categoria" type="text"> #}
+						</td>
+
+						<td>
+							<div v-if="estadoId!=producto.id">${producto.cantidad}</div>
+							<input v-else-if="estadoId==producto.id" v-model="producto.cantidad" type="text">
+						</td>
+
+						<td>
+							<button v-if="estadoId!=producto.id" type="button" @click="editProduct(1,producto.id,0)" class="btn btn-warning">Editar</button>
+							<button v-if="estadoId!=producto.id" @click="deleteProduct(producto.id)" class="btn btn-danger">Eliminar</button>
+
+							<button v-if="estadoId==producto.id" type="button" @click="editProduct(0,0,producto)" class="btn btn-success">Guardar</button>
+							<button v-if="estadoId==producto.id" @click="editProduct(0,0,0)" class="btn btn-danger">Cancelar</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<br>
+			<div class="alert alert-success" role="alert">
+				${mensajeGuardado}
+			</div>
+
+		</div>
+	</div>
+{% endblock %}

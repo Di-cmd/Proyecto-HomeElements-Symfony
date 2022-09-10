@@ -1,0 +1,154 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ProductoController!
+{%
+endblock %}
+
+{% block body %}
+	<style>
+		.example-wrapper {
+			margin: 1em auto;
+			max-width: 800px;
+			width: 95%;
+			font: 18px / 1.5 sans-serif;
+		}
+		.example-wrapper code {
+			background: #F5F5F5;
+			padding: 2px 6px;
+		}
+
+		.titulo {
+			text-align: center;
+			font: 18px / 1.5 sans-serif;
+			margin-bottom: 5%;
+		}
+	</style>
+
+	{#  Desde aca estoy llamando al script que permite conectar el Vue JS   #}
+	<script defer src="{{asset('js/Pedidos.js')}}"></script>
+	<script>
+		const productoJSON = "{{ path('productoJSON') }}";
+const crearProducto = "{{ path('crearProducto') }}";
+	</script>
+
+	<div id="app">
+
+		<div class="container">
+			<br>
+			<br>
+			<div style="text-align:center ;">
+				<h6>
+					Hola: Nombre del cliente
+				</h6>
+			</div>
+			<br>
+
+
+			<div class="contenedor">
+				<div class="card" style="width: 60%">
+					<form @submit.prevent="crearPedido">
+
+						<div class="row" style="text-align: center;margin:1%">
+							<div class="col-12">
+								<br>
+								<br>
+								<h3>Crear Nuevo Pedido</h3>
+							</div>
+
+							<div class="col-6" style="text-align:right">
+								<p>Codigo del pedido</p>
+							</div>
+							<div class="col-6" style="text-align:left">
+								<input v-model="formPedidos.codigo" class="form-control" type="text"/>
+							</div>
+
+							<div class="col-6" style="text-align:right">
+								<p>Departamento</p>
+							</div>
+							<div class="col-6" style="text-align:left">
+								<input v-model="formPedidos.departamento" class="form-control" type="text"/>
+							</div>
+
+							<div class="col-6" style="text-align:right">
+								<p>Municipio</p>
+							</div>
+							<div class="col-6" style="text-align:left">
+								<input v-model="formPedidos.municipio" class="form-control" type="text"/>
+							</div>
+
+
+							{# <div class="col-6" style="text-align:right">
+															<p>Productos</p>
+														</div>
+														<div class="col-6" style="text-align:left">
+															<input   v-model="formClientes.nombre" class="form-control" type="email"/>
+														</div> #}
+
+
+							<div class="col-12">
+								<br>
+								<button class="btn btn-success">Crear Pedido</button>
+							</div>
+						</div>
+					</form>
+					<br>
+					<br>
+				</div>
+			</div>
+
+
+			<br>
+			<br>
+			<div style="text-align:center ;">
+				<h4>
+					Seguimiento de los Pedidos</h4>
+			</div>
+			<br>
+
+			<table class="table table-striped" style="text-align: center;border: 1px;width:100%">
+				<thead style="background-color:black;color:aliceblue">
+					<tr>
+						<th>ID</th>
+						<th>Codigo del pedido</th>
+						<th>Departamento</th>
+						<th>Municipio</th>
+						<th>ACCIONES</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<tr v-for="pedido in pedidos">
+						<td>
+							<div>${pedido.id}</div>
+						</td>
+						<td>
+							<div v-if="estadoId!=pedido.id">${pedido.codigo}</div>
+							<input v-else-if="estadoId==pedido.id" v-model="pedido.codigo" type="text">
+						</td>
+                        <td>
+							<div v-if="estadoId!=pedido.id">${pedido.departamento}</div>
+							 <input v-else-if="estadoId==pedido.id" v-model="pedido.departamento" type="text">
+						</td>
+                        <td>
+							<div v-if="estadoId!=pedido.id">${pedido.municipio}</div>
+							 <input v-else-if="estadoId==pedido.id" v-model="pedido.municipio" type="text"> 
+						</td>
+						<td>
+							<button v-if="estadoId!=pedido.id"  type="button" @click="editPedido(1,pedido.id,0)" class="btn btn-warning">Editar</button>
+							<button v-if="estadoId!=pedido.id"  @click="deletePedido(pedido.id)" class="btn btn-danger">Eliminar</button>
+
+							<button v-if="estadoId==pedido.id" @click="editPedido(0,0,pedido)" class="btn btn-success">Guardar</button>
+							<button v-if="estadoId==pedido.id" @click="editPedido(0,0,0)" class="btn btn-danger">Cancelar</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<br>
+			<br>
+			<br>
+		</div>
+
+
+	</div>
+{% endblock %}
