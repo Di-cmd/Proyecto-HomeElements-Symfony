@@ -54,19 +54,21 @@ class ProductoController extends AbstractController
      * @Route("/productoJSON", name="productoJSON")
      */
     public function getProductos(){
-        $productosAlmacenados = $this->getDoctrine()->getRepository(Producto::class)->findAll();
+        $productosAlmacenados = $this->getDoctrine()->getRepository(Producto::class)->productosGeneral();
         $array=[];
+        //dd($productosAlmacenados);
         for($i=0; $i<count($productosAlmacenados); $i++){
            //var_dump($productosAlmacenados[$i]->getNombre() ;
            $array[$i]=[
-                'id'=>$productosAlmacenados[$i]->getId(),
-                'nombre'=>$productosAlmacenados[$i]->getNombre(),
-                'codigo'=>$productosAlmacenados[$i]->getCodigo(),
-                'categoria'=>$productosAlmacenados[$i]->getCategoria(),
-                'cantidad'=>$productosAlmacenados[$i]->getCantidad(),
-                'precio'=>$productosAlmacenados[$i]->getPrecio(),
+                'id'=>$productosAlmacenados[$i]['id'],
+                'nombre'=>$productosAlmacenados[$i]['nombreP'],
+                'codigo'=>$productosAlmacenados[$i]['codigo'],
+                'categoria'=>$productosAlmacenados[$i]['nombre'],
+                'cantidad'=>$productosAlmacenados[$i]['cantidad'],
+                'precio'=>$productosAlmacenados[$i]['precio'],
            ];
         }
+        
         return new JsonResponse(['productos' => $array]);
     }
 

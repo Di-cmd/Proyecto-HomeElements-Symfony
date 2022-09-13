@@ -23,9 +23,6 @@ class PedidoController extends AbstractController
             'controller_name' => 'PedidoController',
         ]);
     }
-
-
-
     //------------------------------------------------------------------------------------------------------
     //Este es el backend
     //------------------------------------------------------------------------------------------------------
@@ -33,20 +30,22 @@ class PedidoController extends AbstractController
 
     // Consultar Clientes:
     /**
-     * @Route("/pedidoJSON", name="pedidoJSON")
+     * @Route("/pedidoJSON/{id}", name="pedidoJSON")
      */
-    public function getPedidos()
+    public function getPedidos($id, ManagerRegistry $doctrine)
     {
-        $pedidosAlmacenados = $this->getDoctrine()->getRepository(Pedido::class)->findAll();
-        // dd($productosAlmacenados);
+        //Lo convierto a numerico:
+        $id=intval($id);
+        $pedidosAlmacenados = $this->getDoctrine()->getRepository(Pedido::class)->PedidoConsecutivo($id);
+        //dd($pedidosAlmacenados);
         $array = [];
         for ($i = 0; $i < count($pedidosAlmacenados); $i++) {
             //var_dump($productosAlmacenados[$i]->getNombre() ;
             $array[$i] = [
-                'id' => $pedidosAlmacenados[$i]->getId(),
-                'codigo' => $pedidosAlmacenados[$i]->getCodigoPedido(),
-                'departamento' => $pedidosAlmacenados[$i]->getDepartamento(),
-                'municipio' => $pedidosAlmacenados[$i]->getMunicipio(),
+                'id' => $pedidosAlmacenados[$i]['id'],
+                'codigo' => $pedidosAlmacenados[$i]['codigo'],
+                'departamento' => $pedidosAlmacenados[$i]['departamento'],
+                'municipio' => $pedidosAlmacenados[$i]['municipio'],
             ];
         }
         return new JsonResponse(['pedidos' => $array]);
@@ -61,32 +60,33 @@ class PedidoController extends AbstractController
     public function crearPedido(Request $request)
     {
 
-        $incrementa=0;
-        $conse=0;
+        $incrementa = 0;
         $pedidos = $this->getDoctrine()->getRepository(Pedido::class)->findAll();
-
-       
-        if(count($pedidos)>0){
-            
-            for($i=0;$i<count($pedidos);$i++)
-            {
-                $incrementa=$pedidos[$i];
+        // esto permite colocar un consecutivo diferente a los pedidos
+        if (count($pedidos) > 0) {
+            for ($i = 0; $i < count($pedidos); $i++) {
+                $incrementa = intval($pedidos[$i]->getConsecutivo());
             }
-            dd(intval($incrementa['consecutivo']));
-
+            $incrementa = $incrementa + 1;
         }
+
         $data = json_decode($request->getContent(), true);
+        $idCliente=$data['cliente'];
+        $cliente = $this->getDoctrine()->getRepository(Cliente::class)->find($idCliente);
+
         for ($i = 0; $i < count($data['productoAgregado']); $i++) {
             $entityManager = $this->getDoctrine()->getManager();
             $pedido = new Pedido();
             $idProducto = $data['productoAgregado'][$i]['idProducto'];
             $producto = $this->getDoctrine()->getRepository(Producto::class)->find($idProducto);
+
             // se agrega un nuevo pedido: 
             $pedido->setCodigoPedido($data['codigo']);
             $pedido->setDepartamento($data['departamento']);
             $pedido->setMunicipio($data['municipio']);
             $pedido->setProducto($producto);
             $pedido->setConsecutivo($incrementa);
+            $pedido->setCliente($cliente);
             $entityManager->persist($pedido);
             $entityManager->flush();
         }
@@ -122,10 +122,13 @@ class PedidoController extends AbstractController
     }
 
     /**
-     * @Route("/pedidoCliente", name="pedidoCliente")
+     * @Route("/pedidoCliente/{id}", name="pedidoCliente")
      */
-    public function pedido(Cliente $cliente, Request $request)
+    public function pedidoCliente(Cliente $cliente, Request $request): Response
     {
-        return $this->render('pedido/pedido.html.twig');
+        //dd($cliente);
+        return $this->render('pedido/pedido.html.twig', [
+            'controller_name' => 'PedidoController',
+        ]);
     }
 }

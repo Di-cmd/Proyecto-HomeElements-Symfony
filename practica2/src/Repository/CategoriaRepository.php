@@ -43,9 +43,8 @@ class CategoriaRepository extends ServiceEntityRepository
     public function BuscarCategoria($id){
 
     return $this->getEntityManager()
-        ->createQuery('SELECT categoria.nombre FROM   App\Entity\Categoria  categoria
-        WHERE categoria.nombre=:identificador')->setParameter('identificador',$id) ->getSingleResult();
-        
+        ->createQuery('SELECT categoria.id , categoria.nombre FROM   
+        App\Entity\Categoria  categoria')->getResult();    
     }
 
 

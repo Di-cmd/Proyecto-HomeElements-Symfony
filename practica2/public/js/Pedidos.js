@@ -7,11 +7,15 @@ new Vue({
       codigo: "",
       departamento: "",
       municipio: "",
+      cliente:0,
       productoSeleccionado: '',
       cantidadProducto: 0,
       productoAgregado:[],
+     
     },
+    clienteE:this.formPedidos,
     productos: [],
+    clientes: [],
     dane: [],
     departamentos: [],
     municipios: [],
@@ -22,13 +26,12 @@ new Vue({
     mensajeGuardado: "",
   },
   mounted() {
-    this.getProductos();
-    this.getPedidos();
     this.getClientes(), 
     this.getDepartamentos();
   },
   methods: {
     getProductos() {
+      
       fetch(productoJSON)
         .then((response) => response.json())
         .then((response) => {
@@ -37,9 +40,10 @@ new Vue({
     },
 
     async getPedidos() {
-      let pedidos = await axios.get("http://127.0.0.1:8080/pedidoJSON");
+      let pedidos = await axios("http://127.0.0.1:8080/pedidoJSON/"+this.formPedidos['cliente']);
       this.pedidos = pedidos.data.pedidos;
     },
+
 
     async getDepartamentos() {
       let departamentos = await axios.get(
@@ -61,19 +65,20 @@ new Vue({
       });
     },
 
+
     async crearPedido() {
       let crearPedido = await axios.post(
-        "http://127.0.0.1:8080/crearPedido",
-        this.formPedidos
-      );
+        "http://127.0.0.1:8080/crearPedido",this.formPedidos);
       this.mensajeGuardado = crearPedido.data.mensaje;
       this.getPedidos();
     },
+
 
     async getClientes() {
       let clientes = await axios.get("http://127.0.0.1:8080/clienteJSON");
       this.clientes = clientes.data.clientes;
     },
+
 
     async editPedido(estado, idPedido, pedido) {
       this.estadoEditar = estado;
@@ -93,6 +98,8 @@ new Vue({
       }
     },
 
+
+
     //Para el metodo eliminar Tengo que mandar el parametro, por medio de la ruta
     async deletePedido(id) {
       console.log(id)
@@ -105,24 +112,17 @@ new Vue({
 
 
     async agregarProducto() {
-
       let Pagregado={
         idProducto:this.formPedidos.productoSeleccionado.id,
         nombreProducto:this.formPedidos.productoSeleccionado.nombre,
         cantidadProducto:this.formPedidos.cantidadProducto
       }
       this.formPedidos.productoAgregado.push(Pagregado);
-  
-
       console.log(this.formPedidos.productoAgregado);
  
     },
 
-    
-
-
     async eliminarProducto(producto) {
- 
       this.formPedidos.productoAgregado.splice(producto.id,1);
       console.log(this.formPedidos.productoAgregado)
     },

@@ -41,20 +41,31 @@ class ProductoRepository extends ServiceEntityRepository
     }
 
     public function productosGeneral()
-    {
-        $qb = $this->createQueryBuilder("SELECT producto.id, producto.nombre, categoria.nombre  FROM producto INNER JOIN categoria ON producto.categoria = categoria.id");
-        return $qb->getQuery()
-            ->getResult();
 
-        // $qb = $this->createQueryBuilder('');
-        // $qb->select('p.nombre')
+    {
+        // EJ 1
+        return $this->getEntityManager()
+        ->createQuery('SELECT producto.id, producto.nombreP, producto.codigo, producto.cantidad, producto.precio, categoria.nombre
+         FROM  App\Entity\Producto AS producto INNER JOIN App\Entity\Categoria AS categoria  
+         WITH producto.categoria = categoria.id' )->getResult();
+
+        // EJ2
+        // $conn = $this->getEntityManager()->getConnection();
+        // $sql = $conn->prepare(
+        //     "SELECT producto.id, producto.nombre_p as nombreP, producto.codigo, producto.cantidad, producto.precio, categoria.nombre
+        //     FROM producto AS producto
+        //         INNER JOIN categoria AS categoria  
+        //             ON producto.categoria_id = categoria.id");
+        // $resultSet = $sql->executeQuery();
+        // return $resultSet->fetchAllAssociative();
+
+        // EJ3
+        // return $this->createQueryBuilder('producto')
+        //     ->select('producto.id, producto.nombreP, producto.codigo, producto.cantidad, producto.precio, categoria.nombre')
         //     ->from(Producto::class, 'p')
-        //     ->innerJoin(Categoria::class, "c", "WITH", "c.id = p.categoria")
+        //     ->innerJoin(Categoria::class, 'categoria', 'WITH', 'producto.categoria = categoria.id')
         //     ->getQuery()
         //     ->getResult();
-
-
-
     }
 
     //    /**

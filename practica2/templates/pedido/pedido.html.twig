@@ -35,183 +35,223 @@ endblock %}
 	<script defer src="{{asset('js/Pedidos.js')}}"></script>
 	<script>
 		const productoJSON = "{{ path('productoJSON') }}";
-const crearProducto = "{{ path('crearProducto') }}";
+		const crearProducto = "{{ path('crearProducto') }}";
+		let conse = 0;
 	</script>
 
 	<div id="app">
 
 		<div class="container">
+
+			<div style="text-align: center; margin-bottom: 5%;margin-top: 5%;">
+				<h1>Gestionar Pedidos</h1>
+			</div>
+
+			<br>
+
+
+			<div class="row" style="text-align:center;">
+
+				<div class="col-6">
+					<h5>
+						Por favor Escoger el cliente:</h5>
+				</div>
+				<div class="col-6">
+					<select @change="getPedidos()" class="form-select" v-model="formPedidos.cliente">
+						<option selected></option>
+						<option  v-for="cliente in clientes" :value="cliente.id">
+							${cliente.nombre}</option>
+					</select>
+				</div>
+			</div>
+
 			<br>
 			<br>
-			<div style="text-align:center ;">
-				<h6>
-					Hola: Nombre del cliente
-				</h6>
+			<br>
+			<br>
+
+			<div >
+				<div class="contenedor">
+					<div class="card">
+						<div class="row" style="text-align: center;margin:1%">
+							<div class="col-12">
+								<br>
+								<br>
+								<h3>Crear Nuevo Pedido</h3>
+								<br>
+								<br>
+							</div>
+
+							<div class="col-3">
+								<p>Cliente</p>
+							</div>
+							<div class="col-3">
+
+							
+							</div>
+
+
+							<div class="col-3">
+								<p>Codigo del pedido</p>
+							</div>
+							<div class="col-3">
+								<input v-model="formPedidos.codigo" class="form-control" type="text"/>
+							</div>
+
+
+							<div class="col-3">
+								<p>Municipio</p>
+							</div>
+							<div class="col-3">
+								<select class="form-select" v-model="formPedidos.departamento">
+									<option selected></option>
+									<option v-for="departamento in departamentos">
+										${departamento.nombre}</option>
+								</select>
+							</div>
+
+
+							<div class="col-3">
+								<p>Departamento</p>
+							</div>
+							<div class="col-3">
+								<select v-if="formPedidos.departamento" class="form-select" v-model="formPedidos.municipio">
+									<option selected></option>
+									<option v-if="dane.departamento == formPedidos.departamento" v-for="dane in dane">
+										${dane.municipio}</option>
+								</select>
+							</div>
+						</div>
+
+						<div class="contenedor">
+							<table class="table table-striped" style="text-align: center;width:100%">
+								<thead style="background-color:#9BA9A6;color:aliceblue">
+									<tr>
+										<th>NOMBRE PRODUCTO</th>
+										<th>CANTIDAD</th>
+										<th>ACCIONES</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>
+											<select class="form-select" v-model="formPedidos.productoSeleccionado">
+												<option selected></option>
+												<option v-for="producto in productos" :value="producto">
+													${producto.nombre}
+												</option>
+											</select>
+										</td>
+										<td>
+											<input class="form-control" v-model="formPedidos.cantidadProducto" type="number"/>
+										</td>
+										<td>
+											<button @click="agregarProducto()" class="btn btn-dark">Agregar Producto</button>
+										</td>
+
+
+									</tr>
+
+									<tr v-for="producto in formPedidos.productoAgregado">
+										<td>
+											${producto.nombreProducto}
+										</td>
+
+										<td>
+											${producto.cantidadProducto}
+										</td>
+
+
+										<td>
+											<button @click="eliminarProducto(producto)" class="btn btn-danger">Eliminar</button>
+										</td>
+
+									</tr>
+								</tbody>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div style="text-align:center;">
+				<br>
+				<button @click="crearPedido" class="btn btn-success">Crear Pedido</button>
 			</div>
 			<br>
 
-			<div class="contenedor">
-				<div class="card">
-					<div class="row" style="text-align: center;margin:1%">
-						<div class="col-12">
-							<br>
-							<br>
-							<h3>Crear Nuevo Pedido</h3>
-							<br>
-							<br>
-						</div>
-
-						<div class="col-3">
-							<p>Codigo del pedido</p>
-						</div>
-						<div class="col-3">
-							<input v-model="formPedidos.codigo" class="form-control" type="text"/>
-						</div>
-
-
-						<div class="col-3">
-							<p>Municipio</p>
-						</div>
-						<div class="col-3">
-							<select class="form-select" v-model="formPedidos.departamento">
-								<option selected></option>
-								<option v-for="departamento in departamentos">
-									${departamento.nombre}</option>
-							</select>
-						</div>
-
-
-						<div class="col-3">
-							<p>Departamento</p>
-						</div>
-						<div class="col-3">
-							<select v-if="formPedidos.departamento" class="form-select" v-model="formPedidos.municipio">
-								<option selected></option>
-								<option v-if="dane.departamento == formPedidos.departamento" v-for="dane in dane">
-									${dane.municipio}</option>
-							</select>
-						</div>
-					</div>
-
-					<div class="contenedor">
-						<table class="table table-striped" style="text-align: center;width:100%">
-							<thead style="background-color:#9BA9A6;color:aliceblue">
-								<tr>
-									<th>NOMBRE PRODUCTO</th>
-									<th>CANTIDAD</th>
-									<th>ACCIONES</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>
-										<select class="form-select" v-model="formPedidos.productoSeleccionado">
-											<option selected></option>
-											<option v-for="producto in productos" :value="producto">
-												${producto.nombre}
-											</option>
-										</select>
-									</td>
-									<td>
-										<input class="form-control" v-model="formPedidos.cantidadProducto" type="number"/>
-									</td>
-									<td>
-										<button @click="agregarProducto()" class="btn btn-dark">Agregar Producto</button>
-									</td>
-
-
-								</tr>
-
-								<tr v-for="producto in formPedidos.productoAgregado">
-									<td>
-										${producto.nombreProducto}
-									</td>
-
-									<td>
-										${producto.cantidadProducto}
-									</td>
-
-
-									<td>
-										<button @click="eliminarProducto(producto)" class="btn btn-danger">Eliminar</button>
-									</td>
-
-								</tr>
-							</tbody>
-						</td>
-					</tr>
-				</tbody>
-			</table>
 		</div>
-
-		<div style="text-align:center;">
-			<br>
-			<button @click="crearPedido" class="btn btn-success">Crear Pedido</button>
-		</div>
-		<br>
-
 	</div>
+
+
+	<br>
+	<br>
+	<div style="text-align:center ;">
+		<h4>
+			Seguimiento de los Pedidos</h4>
+	</div>
+	<br>
+
+	<table class="table table-striped" style="text-align: center;border: 1px;width:100%">
+		<thead style="background-color:black;color:aliceblue">
+			<tr>
+				<th>ID</th>
+				<th>
+					CODIGO</th>
+				<th>DEPARTAMENTO</th>
+				<th>MUNICIPIO</th>
+				<th>VER PRODUCTOS</th>
+				<th>ACCIONES</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			<tr v-for="pedido in pedidos">
+				<td>
+					<div>${pedido.id}</div>
+				</td>
+				<td>
+					<div v-if="estadoId!=pedido.id">${pedido.codigo}</div>
+					<input v-else-if="estadoId==pedido.id" v-model="pedido.codigo" type="text">
+				</td>
+				<td style="width: 30%;">
+
+					<div v-if="estadoId!=pedido.id">${pedido.departamento}</div>
+					<select class="form-select" v-else-if="estadoId==pedido.id" v-model="pedido.departamento" type="text" style="width:50% ;">
+						<option selected></option>
+						<option v-for="departamento in departamentos">
+							${departamento.nombre}</option>
+					</select>
+				</td>
+				<td>
+
+					<div v-if="estadoId!=pedido.id">${pedido.municipio}</div>
+					<select class="form-select" v-else-if="estadoId==pedido.id" v-model="pedido.municipio" style="width:50% ;">
+						<option selected></option>
+						<option v-if="dane.departamento == pedido.departamento" v-for="dane in dane">
+							${dane.municipio}</option>
+					</select>
+				</td>
+
+
+				<td>
+					<button @click="" type="button" class="btn btn-success">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewbox="0 0 16 16">
+							<path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+						</svg>
+					</button>
+				</td>
+				<td>
+					<button v-if="estadoId!=pedido.id" type="button" @click="editPedido(1,pedido.id,0)" class="btn btn-warning">Editar</button>
+					<button v-if="estadoId!=pedido.id" @click="deletePedido(pedido.id)" class="btn btn-danger">Eliminar</button>
+
+					<button v-if="estadoId==pedido.id" @click="editPedido(0,0,pedido)" class="btn btn-success">Guardar</button>
+					<button v-if="estadoId==pedido.id" @click="editPedido(0,0,0)" class="btn btn-danger">Cancelar</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
 </div>
-
-
-<br>
-<br>
-<div style="text-align:center ;">
-	<h4>
-		Seguimiento de los Pedidos</h4>
-</div>
-<br>
-
-<table class="table table-striped" style="text-align: center;border: 1px;width:100%">
-	<thead style="background-color:black;color:aliceblue">
-		<tr>
-			<th>ID</th>
-			<th>Codigo del pedido</th>
-			<th>Departamento</th>
-			<th>Municipio</th>
-			<th>ACCIONES</th>
-		</tr>
-	</thead>
-
-	<tbody>
-		<tr v-for="pedido in pedidos">
-			<td>
-				<div>${pedido.id}</div>
-			</td>
-			<td>
-				<div v-if="estadoId!=pedido.id">${pedido.codigo}</div>
-				<input v-else-if="estadoId==pedido.id" v-model="pedido.codigo" type="text">
-			</td>
-			<td style="width: 50%;">
-
-				<div v-if="estadoId!=pedido.id">${pedido.departamento}</div>
-				<select class="form-select" v-else-if="estadoId==pedido.id" v-model="pedido.departamento" type="text" style="width:50% ;">
-					<option selected></option>
-					<option v-for="departamento in departamentos">
-						${departamento.nombre}</option>
-				</select>
-			</td>
-			<td>
-
-
-				<div v-if="estadoId!=pedido.id">${pedido.municipio}</div>
-				<select class="form-select" v-else-if="estadoId==pedido.id" v-model="pedido.municipio" style="width:50% ;">
-					<option selected></option>
-					<option v-if="dane.departamento == pedido.departamento" v-for="dane in dane">
-						${dane.municipio}</option>
-				</select>
-			</td>
-			<td>
-				<button v-if="estadoId!=pedido.id" type="button" @click="editPedido(1,pedido.id,0)" class="btn btn-warning">Editar</button>
-				<button v-if="estadoId!=pedido.id" @click="deletePedido(pedido.id)" class="btn btn-danger">Eliminar</button>
-
-				<button v-if="estadoId==pedido.id" @click="editPedido(0,0,pedido)" class="btn btn-success">Guardar</button>
-				<button v-if="estadoId==pedido.id" @click="editPedido(0,0,0)" class="btn btn-danger">Cancelar</button>
-			</td>
-		</tr>
-	</tbody>
-</table>
-
 <br>
 <br>
 <br></div></div>{% endblock %}

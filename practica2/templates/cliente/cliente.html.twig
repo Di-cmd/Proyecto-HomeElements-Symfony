@@ -40,11 +40,19 @@ const crearProducto = "{{ path('crearProducto') }}";
 				<h1>Base de datos Clientes</h1>
 			</div>
 
-			<div>
-				<button @click="nuevoCliente(1)" class="btn btn-success">Crear Cliente</button>
-			</div>
-			<br>
 
+			<div class="row">
+
+				<div class="col-6">
+					<button @click="nuevoCliente(1)" class="btn btn-success">Crear Cliente</button>
+				</div>
+				<div class="col-6" style="text-align:right;">
+					<a href="/pedido" type="button" class="btn btn-info">Gestionar Pedidos</a>
+				</div>
+			</div>
+
+			<br>
+			<br>
 
 			<table class="table table-striped" style="text-align: center;border: 1px;width:100%">
 				<thead style="background-color:black;color:aliceblue">
@@ -54,7 +62,7 @@ const crearProducto = "{{ path('crearProducto') }}";
 						<th>CORREO</th>
 						<th>DEPARTAMENTO</th>
 						<th>MUNICIPIO</th>
-						<th>GESTIONAR PEDIDOS</th>
+						<th>VER PEDIDOS</th>
 						<th colspan="3">ACCIONES</th>
 					</tr>
 
@@ -124,26 +132,18 @@ const crearProducto = "{{ path('crearProducto') }}";
 								<option v-if="dane.departamento == cliente.departamento" v-for="dane in dane">
 									${dane.municipio}</option>
 							</select>
-						
+
 						</td>
 
 
 						<td>
-							<a  href="/pedido" type="button" class="btn btn-success">
+							<button @click="modalPedidos(cliente)" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCrearPedido">
 								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewbox="0 0 16 16">
 									<path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
 								</svg>
-							</a>
+							</button>
+
 						</td>
-
-						{# <td>
-																			<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCrearPedido">
-																			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewbox="0 0 16 16">
-																			<path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-																			</svg>
-																			</button>
-																		</td> #}
-
 						<td>
 							<button v-if="estadoId!=cliente.id" type="button" @click="editCliente(1,cliente.id,0)" class="btn btn-warning">Editar</button>
 							<button v-if="estadoId!=cliente.id" @click="deleteCliente(cliente.id)" class="btn btn-danger">Eliminar</button>
@@ -161,105 +161,31 @@ const crearProducto = "{{ path('crearProducto') }}";
 
 			<!-- Modal de crear un producto-->
 			<div class="modal fade" id="modalCrearPedido" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-				<div class="modal-dialog">
+				<div class="modal-dialog modal-lg">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h5 class="modal-title" id="exampleModalLabel">Crear nuevo pedido</h5>
+							<h5 class="modal-title" id="exampleModalLabel">Ver pedido</h5>
 						</div>
 						<div class="modal-body">
 
-							<div class="row" style="text-align: center;margin:1%">
-								<div class="col-12">
-									<h6>Cliente:
-									</h6>
-									<br>
+							<div class="row" style="text-align:center;">
+
+								<div class="col-6">
+								<strong> Cliente:   </strong>
+								
+								${ dataModal.cliente.nombre }
 								</div>
-							</div>
 
-							<form @submit.prevent="">
-
-								<div class="row" style="text-align: center;margin:1%">
-									<div class="col-12">
-										<h3>Nuevo pedido</h3>
-										<br>
-										<br>
-									</div>
-
-									<div class="col-6" style="text-align:center">
-										<p>Codigo del pedido</p>
-									</div>
-									<div class="col-6" style="text-align:left">
-										<input class="form-control" type="text"/>
-									</div>
-
-									<div class="col-6" style="text-align:center">
-										<p>Departamento</p>
-									</div>
-									<div class="col-6" style="text-align:left">
-										<input class="form-control" type="email"/>
-									</div>
-
-									<div class="col-6" style="text-align:center">
-										<p>Municipio</p>
-									</div>
-									<div class="col-6" style="text-align:left">
-										<input class="form-control" type="email"/>
-									</div>
-									<div class="col-12" style="text-align:center">
-										<br>
-										<div style="background-color:#33C4FF;">
-											<strong>Agrega los productos</strong>
-										</div>
-
-										<br>
-									</div>
-
-									<div class="col-2" style="text-align:center">
-										<p>Producto</p>
-									</div>
-									<div class="col-4" style="text-align:left">
-										<input class="form-control" type="email"/>
-									</div>
-									<div class="col-2" style="text-align:center">
-										<p>cantidad</p>
-									</div>
-									<div class="col-4" style="text-align:left">
-										<input class="form-control" type="number"/>
-									</div>
-
-									<div class="col-12" style="text-align:center">
-										<br>
-										<br>
-										<button class="btn btn-warning">Agregar producto</button>
-									</div>
-
-
+								<div class="col-6">
+								<strong> Correo:   </strong>
+								
+									${ dataModal.cliente.correo }
 								</div>
-							</div>
-							<div class="modal-footer">
-								<button class="btn btn-success">Crear pedido</button>
-								<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+
+
 							</div>
 
-						</form>
-					</div>
-				</div>
-			</div>
-
-
-			<!-- Modal de visualizar todos los pedidos-->
-			<div class="modal fade" id="modalVisualizarPedidos" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="exampleModalLabel">Todos los Pedidos</h5>
-							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-						</div>
-						<div class="modal-body">
-							tabla de pedidos con los productos bla
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button>
+							${ dataModal.pedidos }
 						</div>
 					</div>
 				</div>
