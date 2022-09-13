@@ -35,8 +35,8 @@ endblock %}
 	<script defer src="{{asset('js/Pedidos.js')}}"></script>
 	<script>
 		const productoJSON = "{{ path('productoJSON') }}";
-		const crearProducto = "{{ path('crearProducto') }}";
-		let conse = 0;
+const crearProducto = "{{ path('crearProducto') }}";
+let conse = 0;
 	</script>
 
 	<div id="app">
@@ -59,7 +59,7 @@ endblock %}
 				<div class="col-6">
 					<select @change="getPedidos()" class="form-select" v-model="formPedidos.cliente">
 						<option selected></option>
-						<option  v-for="cliente in clientes" :value="cliente.id">
+						<option v-for="cliente in clientes" :value="cliente.id">
 							${cliente.nombre}</option>
 					</select>
 				</div>
@@ -70,7 +70,7 @@ endblock %}
 			<br>
 			<br>
 
-			<div >
+			<div>
 				<div class="contenedor">
 					<div class="card">
 						<div class="row" style="text-align: center;margin:1%">
@@ -86,8 +86,8 @@ endblock %}
 								<p>Cliente</p>
 							</div>
 							<div class="col-3">
+								${formPedidos.cliente}
 
-							
 							</div>
 
 
@@ -124,18 +124,23 @@ endblock %}
 						</div>
 
 						<div class="contenedor">
-							<table class="table table-striped" style="text-align: center;width:100%">
-								<thead style="background-color:#9BA9A6;color:aliceblue">
+							<table class="table table-striped">
+								<thead>
 									<tr>
 										<th>NOMBRE PRODUCTO</th>
 										<th>CANTIDAD</th>
+										<th>
+											PRECIO UNITARIO</th>
+										<th>
+											PRECIO TOTAL
+										</th>
 										<th>ACCIONES</th>
 									</tr>
 								</thead>
 								<tbody>
 									<tr>
 										<td>
-											<select class="form-select" v-model="formPedidos.productoSeleccionado">
+											<select @change="precioProducto()" class="form-select" v-model="formPedidos.productoSeleccionado">
 												<option selected></option>
 												<option v-for="producto in productos" :value="producto">
 													${producto.nombre}
@@ -143,7 +148,13 @@ endblock %}
 											</select>
 										</td>
 										<td>
-											<input class="form-control" v-model="formPedidos.cantidadProducto" type="number"/>
+											<input @change="precioProducto()" class="form-control" v-model="formPedidos.cantidadProducto" type="number"/>
+										</td>
+										<td>
+											${precioUnitario}
+										</td>
+										<td>
+											${precioTotalProductos}
 										</td>
 										<td>
 											<button @click="agregarProducto()" class="btn btn-dark">Agregar Producto</button>
@@ -161,11 +172,26 @@ endblock %}
 											${producto.cantidadProducto}
 										</td>
 
+										<td>
+											$ ${producto.precioProducto}
+										</td>
+
+										
+										<td>
+											 $ ${producto.precioTotal}
+										</td>
 
 										<td>
 											<button @click="eliminarProducto(producto)" class="btn btn-danger">Eliminar</button>
 										</td>
+									</tr>
 
+									<tr> 
+									
+									<td colspan="3"> Total del Pedido: </td>
+									<td colspan="2">  </td>
+									
+									
 									</tr>
 								</tbody>
 							</td>

@@ -164,29 +164,62 @@ const crearProducto = "{{ path('crearProducto') }}";
 				<div class="modal-dialog modal-lg">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h5 class="modal-title" id="exampleModalLabel">Ver pedido</h5>
+							<h5 class="modal-title" id="exampleModalLabel">Pedidos</h5>
 						</div>
 						<div class="modal-body">
 
 							<div class="row" style="text-align:center;">
-
 								<div class="col-6">
-								<strong> Cliente:   </strong>
-								
-								${ dataModal.cliente.nombre }
+									<strong>
+										Cliente:
+									</strong>
+
+									${ dataModal.cliente.nombre }
 								</div>
 
 								<div class="col-6">
-								<strong> Correo:   </strong>
-								
+									<strong>
+										Correo:
+									</strong>
+
 									${ dataModal.cliente.correo }
 								</div>
-
-
 							</div>
 
-							${ dataModal.pedidos }
+							<br>
+							<br>
+							<br>
+
+							<div style="text-align:center ;">
+								<h3>
+									Pedidos realizados</h3>
+							</div>
+							<br>
+							<br>
+							<table class="table table-bordered" border="1px" style="text-align:center ;">
+								<thead>
+									<tr style="background-color:#C2958B ;">
+										<th scope="col">codigo</th>
+										<th scope="col">Departamento</th>
+										<th scope="col">Municipio</th>
+										<th scope="col">Total del Pedido $ </th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="pedido in dataModal.pedido">
+
+										<td>${pedido.codigo}</td>
+										<td>${pedido.departamento}</td>
+										<td>${pedido.municipio}</td>
+										<td></td>
+									</tr>
+								</tbody>
+							</table>
 						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+						</div>
+
 					</div>
 				</div>
 			</div>

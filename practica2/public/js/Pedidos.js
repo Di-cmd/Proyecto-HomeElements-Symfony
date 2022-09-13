@@ -10,10 +10,10 @@ new Vue({
       cliente:0,
       productoSeleccionado: '',
       cantidadProducto: 0,
+      totalPedido:0,
       productoAgregado:[],
      
     },
-    clienteE:this.formPedidos,
     productos: [],
     clientes: [],
     dane: [],
@@ -24,10 +24,15 @@ new Vue({
     pedido: 0,
     pedidos: [],
     mensajeGuardado: "",
+    precioUnitario:0,
+    precioTotalProductos:0,
+    
+
   },
   mounted() {
     this.getClientes(), 
-    this.getDepartamentos();
+    this.getDepartamentos(),
+    this.getProductos()
   },
   methods: {
     getProductos() {
@@ -115,11 +120,21 @@ new Vue({
       let Pagregado={
         idProducto:this.formPedidos.productoSeleccionado.id,
         nombreProducto:this.formPedidos.productoSeleccionado.nombre,
-        cantidadProducto:this.formPedidos.cantidadProducto
+        cantidadProducto:this.formPedidos.cantidadProducto,
+        precioProducto:this.precioUnitario,
+        precioTotal:this.precioTotalProductos
       }
       this.formPedidos.productoAgregado.push(Pagregado);
-      console.log(this.formPedidos.productoAgregado);
- 
+
+      // console.log(this.formPedidos.productoAgregado.precioTotal)
+      // this.formPedidos.totalPedido=this.formPedidos.totalPedido+this.formPedidos.productoAgregado.precioTotal;
+      // //medir la longitud de agregados
+      //   console.log(this.formPedidos.totalPedido)
+  
+
+
+
+
     },
 
     async eliminarProducto(producto) {
@@ -127,7 +142,17 @@ new Vue({
       console.log(this.formPedidos.productoAgregado)
     },
 
+    async precioProducto() {
+      this.precioUnitario=this.formPedidos.productoSeleccionado.precio
+      this.precioTotalProductos=this.precioUnitario * this.formPedidos.cantidadProducto
 
+
+      
+     
+
+
+
+    },
 
 
 
