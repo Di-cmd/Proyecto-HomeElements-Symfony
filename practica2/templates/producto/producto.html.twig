@@ -102,8 +102,8 @@ const crearProducto = "{{ path('crearProducto') }}";
 							<input v-else-if="estadoId==producto.id" v-model="producto.codigo" type="number">
 						</td>
 						<td>
-							{# <div v-if="estadoId!=producto.id">${producto.categoria}</div>	
-							<input v-else-if="estadoId==producto.id" v-model="producto.categoria" type="text">#}
+							<div v-if="estadoId!=producto.id">${producto.categoria}</div>	
+							<input v-else-if="estadoId==producto.id" v-model="producto.categoria" type="text">
 						</td>
 
 						<td>

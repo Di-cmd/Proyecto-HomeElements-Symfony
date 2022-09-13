@@ -7,7 +7,9 @@ new Vue({
       codigo: "",
       departamento: "",
       municipio: "",
-      producto:[]
+      productoSeleccionado: '',
+      cantidadProducto: 0,
+      productoAgregado:[],
     },
     productos: [],
     dane: [],
@@ -93,14 +95,47 @@ new Vue({
 
     //Para el metodo eliminar Tengo que mandar el parametro, por medio de la ruta
     async deletePedido(id) {
-      let eliminar = await axios("http://127.0.0.1:8080/deletePedido/" + id, {
-        method: "POST",
-      });
+      console.log(id)
+      let eliminar = await axios.post("http://127.0.0.1:8080/deletePedido/"+id);
       eliminar = await eliminar;
       eliminar = eliminar.data;
       this.mensajeGuardado = eliminar["mensaje"];
       this.getPedidos();
     },
+
+
+    async agregarProducto() {
+
+      let Pagregado={
+        idProducto:this.formPedidos.productoSeleccionado.id,
+        nombreProducto:this.formPedidos.productoSeleccionado.nombre,
+        cantidadProducto:this.formPedidos.cantidadProducto
+      }
+      this.formPedidos.productoAgregado.push(Pagregado);
+  
+
+      console.log(this.formPedidos.productoAgregado);
+ 
+    },
+
+    
+
+
+    async eliminarProducto(producto) {
+ 
+      this.formPedidos.productoAgregado.splice(producto.id,1);
+      console.log(this.formPedidos.productoAgregado)
+    },
+
+
+
+
+
+
   },
+
+
+
+
   computed: {},
 });

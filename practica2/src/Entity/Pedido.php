@@ -6,6 +6,7 @@ use App\Repository\PedidoRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Producto;
 
 /**
  * @ORM\Entity(repositoryClass=PedidoRepository::class)
@@ -40,9 +41,16 @@ class Pedido
     private $cliente;
 
     /**
-     * @ORM\OneToMany(targetEntity=Producto::class, mappedBy="pedido")
+     * @ORM\ManyToOne(targetEntity=Producto::class, inversedBy="pedido")
      */
-    private $productos;
+    private $producto;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $consecutivo;
+
+   
 
 
     public function __construct()
@@ -61,7 +69,7 @@ class Pedido
         return $this->codigo;
     }
 
-    public function setgetCodigoPedido(string $codigo): self
+    public function setCodigoPedido(string $codigo = null): self
     {
         $this->codigo = $codigo;
 
@@ -106,35 +114,28 @@ class Pedido
         return $this;
     }
 
-    /**
-     * @return Collection<int, Producto>
-     */
-    public function getProductos(): Collection
+    public function getProducto(): ?Producto
     {
-        return $this->productos;
+        return $this->producto;
     }
 
-    public function addProducto(Producto $producto): self
+    public function setProducto(?Producto $producto): self
     {
-        if (!$this->productos->contains($producto)) {
-            $this->productos[] = $producto;
-            $producto->setPedido($this);
-        }
+        $this->producto = $producto;
 
         return $this;
     }
 
-    public function removeProducto(Producto $producto): self
+    public function getConsecutivo(): ?string
     {
-        if ($this->productos->removeElement($producto)) {
-            // set the owning side to null (unless already changed)
-            if ($producto->getPedido() === $this) {
-                $producto->setPedido(null);
-            }
-        }
+        return $this->consecutivo;
+    }
+
+    public function setConsecutivo(string $consecutivo): self
+    {
+        $this->consecutivo = $consecutivo;
 
         return $this;
     }
 
- 
 }

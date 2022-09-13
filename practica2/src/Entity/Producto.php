@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\ProductoRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -47,10 +49,14 @@ class Producto
     private $categoria;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Pedido::class, inversedBy="productos")
+     * @ORM\OneToMany(targetEntity=Pedido::class, mappedBy="producto")
      */
     private $pedido;
 
+    public function __construct()
+    {
+        $this->pedido = new ArrayCollection();
+    }
 
 
 
@@ -123,16 +129,35 @@ class Producto
         return $this;
     }
 
-    public function getPedido(): ?Pedido
+    /**
+     * @return Collection<int, Pedido>
+     */
+    public function getPedido(): Collection
     {
         return $this->pedido;
     }
 
-    public function setPedido(?Pedido $pedido): self
+    public function addPedido(Pedido $pedido): self
     {
-        $this->pedido = $pedido;
+        if (!$this->pedido->contains($pedido)) {
+            $this->pedido[] = $pedido;
+            $pedido->setProducto($this);
+        }
 
         return $this;
     }
+
+    public function removePedido(Pedido $pedido): self
+    {
+        if ($this->pedido->removeElement($pedido)) {
+            // set the owning side to null (unless already changed)
+            if ($pedido->getProducto() === $this) {
+                $pedido->setProducto(null);
+            }
+        }
+
+        return $this;
+    }
+
 
 }

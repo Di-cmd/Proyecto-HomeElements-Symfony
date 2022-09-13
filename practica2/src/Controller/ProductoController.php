@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Categoria;
 use App\Entity\Cliente;
 use App\Entity\Producto;
+use App\Repository\ProductoRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -54,7 +55,6 @@ class ProductoController extends AbstractController
      */
     public function getProductos(){
         $productosAlmacenados = $this->getDoctrine()->getRepository(Producto::class)->findAll();
-        // dd($productosAlmacenados);
         $array=[];
         for($i=0; $i<count($productosAlmacenados); $i++){
            //var_dump($productosAlmacenados[$i]->getNombre() ;

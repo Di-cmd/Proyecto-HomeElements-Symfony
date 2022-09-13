@@ -52,90 +52,101 @@ const crearProducto = "{{ path('crearProducto') }}";
 
 			<div class="contenedor">
 				<div class="card">
-					<form @submit.prevent="crearPedido">
-
-						<div class="row" style="text-align: center;margin:1%">
-							<div class="col-12">
-								<br>
-								<br>
-								<h3>Crear Nuevo Pedido</h3>
-								<br>
-								<br>
-							</div>
-
-							<div class="col-3">
-								<p>Codigo del pedido</p>
-							</div>
-							<div class="col-3">
-								<input v-model="formPedidos.codigo" class="form-control" type="text"/>
-							</div>
-
-
-							<div class="col-3">
-								<p>Municipio</p>
-							</div>
-							<div class="col-3">
-								<select class="form-select" v-model="formPedidos.departamento">
-									<option selected></option>
-									<option v-for="departamento in departamentos">
-										${departamento.nombre}</option>
-								</select>
-							</div>
-
-
-							<div class="col-3">
-								<p>Departamento</p>
-							</div>
-							<div class="col-3">
-								<select v-if="formPedidos.departamento" class="form-select" v-model="formPedidos.municipio">
-									<option selected></option>
-									<option v-if="dane.departamento == formPedidos.departamento" v-for="dane in dane">
-										${dane.municipio}</option>
-								</select>
-							</div>
+					<div class="row" style="text-align: center;margin:1%">
+						<div class="col-12">
+							<br>
+							<br>
+							<h3>Crear Nuevo Pedido</h3>
+							<br>
+							<br>
 						</div>
 
-						<div class="contenedor">
-							<table class="table table-striped" style="text-align: center;width:100%">
-								<thead style="background-color:#9BA9A6;color:aliceblue">
-									<tr>
-										<th>NOMBRE PRODUCTO</th>
-										<th>CANTIDAD</th>
-										<th >ACCIONES</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td>
-											<select class="form-select">
-												<option selected></option>
-												<option v-for="producto in productos">
-													${producto.nombre}</option>
-											</select>
-										</td>
-
-										<td>
-											<input v-model="formPedidos.codigo" class="form-control" type="number"/>
-										</td>
+						<div class="col-3">
+							<p>Codigo del pedido</p>
+						</div>
+						<div class="col-3">
+							<input v-model="formPedidos.codigo" class="form-control" type="text"/>
+						</div>
 
 
-										<td>
-											<button class="btn btn-dark">Agregar Producto</button>
-										</td>
+						<div class="col-3">
+							<p>Municipio</p>
+						</div>
+						<div class="col-3">
+							<select class="form-select" v-model="formPedidos.departamento">
+								<option selected></option>
+								<option v-for="departamento in departamentos">
+									${departamento.nombre}</option>
+							</select>
+						</div>
 
-									</tr>
-								</tbody>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</form>
-	
+
+						<div class="col-3">
+							<p>Departamento</p>
+						</div>
+						<div class="col-3">
+							<select v-if="formPedidos.departamento" class="form-select" v-model="formPedidos.municipio">
+								<option selected></option>
+								<option v-if="dane.departamento == formPedidos.departamento" v-for="dane in dane">
+									${dane.municipio}</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="contenedor">
+						<table class="table table-striped" style="text-align: center;width:100%">
+							<thead style="background-color:#9BA9A6;color:aliceblue">
+								<tr>
+									<th>NOMBRE PRODUCTO</th>
+									<th>CANTIDAD</th>
+									<th>ACCIONES</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>
+										<select class="form-select" v-model="formPedidos.productoSeleccionado">
+											<option selected></option>
+											<option v-for="producto in productos" :value="producto">
+												${producto.nombre}
+											</option>
+										</select>
+									</td>
+									<td>
+										<input class="form-control" v-model="formPedidos.cantidadProducto" type="number"/>
+									</td>
+									<td>
+										<button @click="agregarProducto()" class="btn btn-dark">Agregar Producto</button>
+									</td>
+
+
+								</tr>
+
+								<tr v-for="producto in formPedidos.productoAgregado">
+									<td>
+										${producto.nombreProducto}
+									</td>
+
+									<td>
+										${producto.cantidadProducto}
+									</td>
+
+
+									<td>
+										<button @click="eliminarProducto(producto)" class="btn btn-danger">Eliminar</button>
+									</td>
+
+								</tr>
+							</tbody>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 
 		<div style="text-align:center;">
 			<br>
-			<button class="btn btn-success">Crear Pedido</button>
+			<button @click="crearPedido" class="btn btn-success">Crear Pedido</button>
 		</div>
 		<br>
 
@@ -171,13 +182,24 @@ const crearProducto = "{{ path('crearProducto') }}";
 				<div v-if="estadoId!=pedido.id">${pedido.codigo}</div>
 				<input v-else-if="estadoId==pedido.id" v-model="pedido.codigo" type="text">
 			</td>
-			<td>
+			<td style="width: 50%;">
+
 				<div v-if="estadoId!=pedido.id">${pedido.departamento}</div>
-				<input v-else-if="estadoId==pedido.id" v-model="pedido.departamento" type="text">
+				<select class="form-select" v-else-if="estadoId==pedido.id" v-model="pedido.departamento" type="text" style="width:50% ;">
+					<option selected></option>
+					<option v-for="departamento in departamentos">
+						${departamento.nombre}</option>
+				</select>
 			</td>
 			<td>
+
+
 				<div v-if="estadoId!=pedido.id">${pedido.municipio}</div>
-				<input v-else-if="estadoId==pedido.id" v-model="pedido.municipio" type="text">
+				<select class="form-select" v-else-if="estadoId==pedido.id" v-model="pedido.municipio" style="width:50% ;">
+					<option selected></option>
+					<option v-if="dane.departamento == pedido.departamento" v-for="dane in dane">
+						${dane.municipio}</option>
+				</select>
 			</td>
 			<td>
 				<button v-if="estadoId!=pedido.id" type="button" @click="editPedido(1,pedido.id,0)" class="btn btn-warning">Editar</button>

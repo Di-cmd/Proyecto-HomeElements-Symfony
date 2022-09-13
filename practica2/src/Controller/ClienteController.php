@@ -78,7 +78,7 @@ class ClienteController extends AbstractController
      * @Route("/deleteCliente/{id}", name="deleteCliente")
      */
 
-    public function deleteaCliente(Cliente $cliente, ManagerRegistry $doctrine)
+    public function deleteCliente(Cliente $cliente, ManagerRegistry $doctrine)
     {
         $cliente;
         $entityManager = $doctrine->getManager();

@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Categoria;
 use App\Entity\Producto;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -39,28 +40,45 @@ class ProductoRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Producto[] Returns an array of Producto objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('p.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function productosGeneral()
+    {
+        $qb = $this->createQueryBuilder("SELECT producto.id, producto.nombre, categoria.nombre  FROM producto INNER JOIN categoria ON producto.categoria = categoria.id");
+        return $qb->getQuery()
+            ->getResult();
 
-//    public function findOneBySomeField($value): ?Producto
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+        // $qb = $this->createQueryBuilder('');
+        // $qb->select('p.nombre')
+        //     ->from(Producto::class, 'p')
+        //     ->innerJoin(Categoria::class, "c", "WITH", "c.id = p.categoria")
+        //     ->getQuery()
+        //     ->getResult();
+
+
+
+    }
+
+    //    /**
+    //     * @return Producto[] Returns an array of Producto objects
+    //     */
+    //    public function findByExampleField($value): array
+    //    {
+    //        return $this->createQueryBuilder('p')
+    //            ->andWhere('p.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->orderBy('p.id', 'ASC')
+    //            ->setMaxResults(10)
+    //            ->getQuery()
+    //            ->getResult()
+    //        ;
+    //    }
+
+    //    public function findOneBySomeField($value): ?Producto
+    //    {
+    //        return $this->createQueryBuilder('p')
+    //            ->andWhere('p.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->getQuery()
+    //            ->getOneOrNullResult()
+    //        ;
+    //    }
 }
