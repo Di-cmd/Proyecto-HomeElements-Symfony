@@ -62,10 +62,11 @@ let conse = 0;
 			<div v-if=" formPedidos.cliente != ''   ">
 				<div class="contenedor">
 					<div class="card">
-						<div class="row" style="text-align:justify;margin:1%">
+						<div class="row" style="text-align:center;margin:1%">
 							<div class="col-12">
 								<br>
 								<h5>Nuevo Pedido</h5>
+								<br>
 								<br>
 							</div>
 
@@ -84,7 +85,7 @@ let conse = 0;
 								<p>Codigo del pedido</p>
 							</div>
 							<div class="col-3">
-								<input v-model="formPedidos.codigo" class="form-control" type="text"/>
+								<input required v-model="formPedidos.codigo" class="form-control" type="text"/>
 							</div>
 
 
@@ -92,7 +93,7 @@ let conse = 0;
 								<p>Municipio</p>
 							</div>
 							<div class="col-3">
-								<select class="form-select" v-model="formPedidos.departamento">
+								<select required class="form-select" v-model="formPedidos.departamento">
 									<option selected></option>
 									<option v-for="departamento in departamentos">
 										${departamento.nombre}</option>
@@ -104,7 +105,7 @@ let conse = 0;
 								<p>Departamento</p>
 							</div>
 							<div class="col-3">
-								<select v-if="formPedidos.departamento" class="form-select" v-model="formPedidos.municipio">
+								<select required v-if="formPedidos.departamento" class="form-select" v-model="formPedidos.municipio">
 									<option selected></option>
 									<option v-if="dane.departamento == formPedidos.departamento" v-for="dane in dane">
 										${dane.municipio}</option>
@@ -130,7 +131,7 @@ let conse = 0;
 								<tbody>
 									<tr>
 										<td>
-											<select @change="precioProducto()" class="form-select" v-model="formPedidos.productoSeleccionado">
+											<select required @change="precioProducto()" class="form-select" v-model="formPedidos.productoSeleccionado">
 												<option selected></option>
 												<option v-for="producto in productos" :value="producto">
 													${producto.nombre}
@@ -138,7 +139,7 @@ let conse = 0;
 											</select>
 										</td>
 										<td>
-											<input @change="precioProducto()" class="form-control" v-model="formPedidos.cantidadProducto" type="number" min="0" :max="formPedidos.productoSeleccionado.cantidad"/>
+											<input required @change="precioProducto()" class="form-control" v-model="formPedidos.cantidadProducto" type="number" min="0" :max="formPedidos.productoSeleccionado.cantidad"/>
 										</td>
 										<td>
 											${precioUnitario}

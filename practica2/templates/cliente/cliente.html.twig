@@ -74,20 +74,20 @@ const crearProducto = "{{ path('crearProducto') }}";
 						<td></td>
 
 						<td>
-							<input v-model="formClientes.nombre" class="form-control" type="text"/>
+							<input required v-model="formClientes.nombre" class="form-control" type="text"/>
 						</td>
-						<td><input v-model="formClientes.correo" class="form-control" type="email"/>
+						<td><input required v-model="formClientes.correo" class="form-control" type="email"/>
 						</td>
 						<td>
 
-							<select class="form-select" v-model="formClientes.departamento">
+							<select required class="form-select" v-model="formClientes.departamento">
 								<option selected></option>
 								<option v-for="departamento in departamentos">
 									${departamento.nombre}</option>
 							</select>
 						</td>
 						<td>
-							<select v-if="formClientes.departamento" class="form-select" v-model="formClientes.municipio">
+							<select required v-if="formClientes.departamento" class="form-select" v-model="formClientes.municipio">
 								<option selected></option>
 								<option v-if="dane.departamento == formClientes.departamento" v-for="dane in dane">
 									${dane.municipio}</option>
