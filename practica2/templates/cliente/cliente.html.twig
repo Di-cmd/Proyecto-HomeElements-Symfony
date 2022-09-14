@@ -198,7 +198,7 @@ const crearProducto = "{{ path('crearProducto') }}";
 							<br>
 							<table class="table table-bordered" border="1px" style="text-align:center ;">
 								<thead>
-									<tr style="background-color:#C2958B ;">
+									<tr style="background-color:#596671;color:white">
 										<th scope="col">codigo</th>
 										<th scope="col">Departamento</th>
 										<th scope="col">Municipio</th>
@@ -211,7 +211,7 @@ const crearProducto = "{{ path('crearProducto') }}";
 										<td>${pedido.codigo}</td>
 										<td>${pedido.departamento}</td>
 										<td>${pedido.municipio}</td>
-										<td></td>
+										<td> $ ${pedido.totalPedido} pesos </td>
 									</tr>
 								</tbody>
 							</table>

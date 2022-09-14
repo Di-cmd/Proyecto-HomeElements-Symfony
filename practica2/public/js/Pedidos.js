@@ -7,12 +7,11 @@ new Vue({
       codigo: "",
       departamento: "",
       municipio: "",
-      cliente:0,
-      productoSeleccionado: '',
+      cliente: "",
+      productoSeleccionado: "",
       cantidadProducto: 0,
-      totalPedido:0,
-      productoAgregado:[],
-     
+      totalPedido: 0,
+      productoAgregado: [],
     },
     productos: [],
     clientes: [],
@@ -24,19 +23,18 @@ new Vue({
     pedido: 0,
     pedidos: [],
     mensajeGuardado: "",
-    precioUnitario:0,
-    precioTotalProductos:0,
-    
-
+    precioUnitario: 0,
+    precioTotalProductos: 0,
+    disponible: true,
+    clienteEscogido: "",
+    productosAgregados: [],
+    pedidoModal:{}
   },
   mounted() {
-    this.getClientes(), 
-    this.getDepartamentos(),
-    this.getProductos()
+    this.getClientes(), this.getDepartamentos(), this.getProductos();
   },
   methods: {
     getProductos() {
-      
       fetch(productoJSON)
         .then((response) => response.json())
         .then((response) => {
@@ -45,10 +43,22 @@ new Vue({
     },
 
     async getPedidos() {
-      let pedidos = await axios("http://127.0.0.1:8080/pedidoJSON/"+this.formPedidos['cliente']);
-      this.pedidos = pedidos.data.pedidos;
-    },
+      let pedidos = await axios.post(
+        "http://127.0.0.1:8080/pedidoJSON/" + this.formPedidos["cliente"]
+      );
+      this.pedidos = pedidos.data.pedidos.map((pedido) => {
+        return {
+          ...pedido,
+          editar: false,
+        };
+      });
 
+      console.log(this.formPedidos["cliente"]);
+
+      this.clienteEscogido = this.clientes.find(
+        (cliente) => cliente.id === this.formPedidos["cliente"]
+      );
+    },
 
     async getDepartamentos() {
       let departamentos = await axios.get(
@@ -70,97 +80,129 @@ new Vue({
       });
     },
 
-
     async crearPedido() {
-      let crearPedido = await axios.post(
-        "http://127.0.0.1:8080/crearPedido",this.formPedidos);
+      this.formPedidos.totalPedido = this.formPedidos.productoAgregado.reduce(
+        (prev, curr) => prev + curr.precioTotal,0);
+
+      let crearPedido = await axios.post("http://127.0.0.1:8080/crearPedido",this.formPedidos);
       this.mensajeGuardado = crearPedido.data.mensaje;
       this.getPedidos();
-    },
 
+      //Limpiar el formulario
+      this.formPedidos.codigo = "";
+      this.formPedidos.departamento = "";
+      this.formPedidos.municipio = "";
+      this.formPedidos.productoSeleccionado = "";
+      this.formPedidos.cantidadProducto = 0;
+      this.formPedidos.totalPedido = 0;
+      this.formPedidos.productoAgregado = [];
+    },
 
     async getClientes() {
       let clientes = await axios.get("http://127.0.0.1:8080/clienteJSON");
       this.clientes = clientes.data.clientes;
     },
 
-
-    async editPedido(estado, idPedido, pedido) {
-      this.estadoEditar = estado;
-      this.estadoId = idPedido;
-      this.pedido = pedido;
-
-      if (this.pedido != 0) {
-        let editar = await axios.post(
-          "http://127.0.0.1:8080/editarPedido",
-          this.pedido
-        );
-        this.mensajeGuardado = editar.data.mensaje;
-        this.getPedidos();
-      } else {
-        console.log("este es el cliente", this.pedido);
-        this.getPedidos();
-      }
+    async editarPedido(index) {
+      await this.getPedidos();
+      this.pedidos[index].editar = true;
     },
 
+    async guardarEdicion(pedido) {
+      let editar = await axios.post(
+        "http://127.0.0.1:8080/editarPedido",
+        pedido
+      );
+      this.mensajeGuardado = editar.data.mensaje;
+      this.getPedidos();
+    },
 
+    // async editPedido(estado, idPedido, pedido) {
+    //   this.estadoEditar = estado;
+    //   this.estadoId = idPedido;
+    //   this.pedido = pedido;
+
+    //   if (this.pedido != 0) {
+    //     let editar = await axios.post(
+    //       "http://127.0.0.1:8080/editarPedido",
+    //       this.pedido
+    //     );
+
+    //     this.mensajeGuardado = editar.data.mensaje;
+    //     this.getPedidos();
+
+    //   }
+    //   else {
+    //     console.log("este es el cliente", this.pedido);
+    //     this.getPedidos();
+    //   }
+    // },
 
     //Para el metodo eliminar Tengo que mandar el parametro, por medio de la ruta
     async deletePedido(id) {
-      console.log(id)
-      let eliminar = await axios.post("http://127.0.0.1:8080/deletePedido/"+id);
+      console.log(id);
+      let eliminar = await axios.post(
+        "http://127.0.0.1:8080/deletePedido/" + id
+      );
+
       eliminar = await eliminar;
       eliminar = eliminar.data;
       this.mensajeGuardado = eliminar["mensaje"];
       this.getPedidos();
     },
 
-
     async agregarProducto() {
-      let Pagregado={
-        idProducto:this.formPedidos.productoSeleccionado.id,
-        nombreProducto:this.formPedidos.productoSeleccionado.nombre,
-        cantidadProducto:this.formPedidos.cantidadProducto,
-        precioProducto:this.precioUnitario,
-        precioTotal:this.precioTotalProductos
-      }
+      let Pagregado = {
+        idProducto: this.formPedidos.productoSeleccionado.id,
+        nombreProducto: this.formPedidos.productoSeleccionado.nombre,
+        cantidadProducto: this.formPedidos.cantidadProducto,
+        precioProducto: this.precioUnitario,
+        precioTotal: this.precioTotalProductos,
+      };
+
+      //Guardo los Productos y agrego los productos a una variable reactiva
       this.formPedidos.productoAgregado.push(Pagregado);
+      this.productosAgregados.push(Pagregado);
 
-      // console.log(this.formPedidos.productoAgregado.precioTotal)
-      // this.formPedidos.totalPedido=this.formPedidos.totalPedido+this.formPedidos.productoAgregado.precioTotal;
-      // //medir la longitud de agregados
-      //   console.log(this.formPedidos.totalPedido)
-  
-
-
-
-
+      //Se limpia el formulario:
+      this.formPedidos.productoSeleccionado = "";
+      this.formPedidos.cantidadProducto = 0;
+      this.precioUnitario = 0;
+      this.precioTotalProductos = 0;
     },
 
     async eliminarProducto(producto) {
-      this.formPedidos.productoAgregado.splice(producto.id,1);
-      console.log(this.formPedidos.productoAgregado)
+      this.formPedidos.productoAgregado.splice(producto.id, 1);
+      console.log(this.formPedidos.productoAgregado);
     },
 
     async precioProducto() {
-      this.precioUnitario=this.formPedidos.productoSeleccionado.precio
-      this.precioTotalProductos=this.precioUnitario * this.formPedidos.cantidadProducto
-
-
-      
-     
-
-
-
+      this.precioUnitario = this.formPedidos.productoSeleccionado.precio;
+      this.precioTotalProductos =
+        this.precioUnitario * this.formPedidos.cantidadProducto;
     },
 
+    async modalProductos(pedido) {
 
+      this.pedidoModal=pedido;
+
+      console.log(this.pedidoModal);
+
+      let pedidos = await axios("http://127.0.0.1:8080/buscarProductos/"+ pedido.id);
+      this.mensajeGuardado = pedidos.data.productosAsociados;
+      this.productosAgregados=this.mensajeGuardado;
+    },
 
 
   },
 
+  computed: {
+    // this.formPedidos.totalPedido =this.formPedidos.totalPedido + Pagregado.precioTotal;
 
-
-
-  computed: {},
+    totalPedido() {
+      return this.formPedidos.productoAgregado.reduce((prev, curr) => {
+        return prev + curr.precioTotal;
+      }, 0);
+    },
+  },
 });

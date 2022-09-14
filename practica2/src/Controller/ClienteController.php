@@ -80,7 +80,7 @@ class ClienteController extends AbstractController
 
     public function deleteCliente(Cliente $cliente, ManagerRegistry $doctrine)
     {
-        $cliente;
+       
         $entityManager = $doctrine->getManager();
         $entityManager->remove($cliente);
         $entityManager->flush();

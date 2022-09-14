@@ -25,9 +25,6 @@ endblock %}
 
 		.contenedor {
 			text-align: center;
-			margin-bottom: 5%;
-			margin-left: 5%;
-			margin-right: 5%;
 		}
 	</style>
 
@@ -42,22 +39,17 @@ let conse = 0;
 	<div id="app">
 
 		<div class="container">
-
 			<div style="text-align: center; margin-bottom: 5%;margin-top: 5%;">
 				<h1>Gestionar Pedidos</h1>
 			</div>
-
-			<br>
-
-
 			<div class="row" style="text-align:center;">
 
 				<div class="col-6">
-					<h5>
-						Por favor Escoger el cliente:</h5>
+					<h6>
+						Por favor Escoger el cliente:</h6>
 				</div>
 				<div class="col-6">
-					<select @change="getPedidos()" class="form-select" v-model="formPedidos.cliente">
+					<select @change="getPedidos" class="form-select" v-model="formPedidos.cliente">
 						<option selected></option>
 						<option v-for="cliente in clientes" :value="cliente.id">
 							${cliente.nombre}</option>
@@ -67,18 +59,13 @@ let conse = 0;
 
 			<br>
 			<br>
-			<br>
-			<br>
-
-			<div>
+			<div v-if=" formPedidos.cliente != ''   ">
 				<div class="contenedor">
 					<div class="card">
-						<div class="row" style="text-align: center;margin:1%">
+						<div class="row" style="text-align:justify;margin:1%">
 							<div class="col-12">
 								<br>
-								<br>
-								<h3>Crear Nuevo Pedido</h3>
-								<br>
+								<h5>Nuevo Pedido</h5>
 								<br>
 							</div>
 
@@ -86,7 +73,9 @@ let conse = 0;
 								<p>Cliente</p>
 							</div>
 							<div class="col-3">
-								${formPedidos.cliente}
+								<strong>
+									${clienteEscogido.nombre}
+								</strong>
 
 							</div>
 
@@ -122,9 +111,10 @@ let conse = 0;
 								</select>
 							</div>
 						</div>
+						<br>
 
 						<div class="contenedor">
-							<table class="table table-striped">
+							<table class="table" style="width:100%;">
 								<thead>
 									<tr>
 										<th>NOMBRE PRODUCTO</th>
@@ -148,7 +138,7 @@ let conse = 0;
 											</select>
 										</td>
 										<td>
-											<input @change="precioProducto()" class="form-control" v-model="formPedidos.cantidadProducto" type="number"/>
+											<input @change="precioProducto()" class="form-control" v-model="formPedidos.cantidadProducto" type="number" min="0" :max="formPedidos.productoSeleccionado.cantidad"/>
 										</td>
 										<td>
 											${precioUnitario}
@@ -157,7 +147,7 @@ let conse = 0;
 											${precioTotalProductos}
 										</td>
 										<td>
-											<button @click="agregarProducto()" class="btn btn-dark">Agregar Producto</button>
+											<button @click="agregarProducto" class="btn btn-dark">Agregar Producto</button>
 										</td>
 
 
@@ -176,9 +166,9 @@ let conse = 0;
 											$ ${producto.precioProducto}
 										</td>
 
-										
+
 										<td>
-											 $ ${producto.precioTotal}
+											$ ${producto.precioTotal}
 										</td>
 
 										<td>
@@ -186,98 +176,218 @@ let conse = 0;
 										</td>
 									</tr>
 
-									<tr> 
-									
-									<td colspan="3"> Total del Pedido: </td>
-									<td colspan="2">  </td>
-									
-									
+									<tr style="background-color:cadetblue;color:azure">
+
+										<td colspan="3">
+											<strong>
+												Total del Pedido:</strong>
+										</td>
+										<td colspan="2">
+											<strong>
+												${totalPedido}
+											</strong>
+										</td>
 									</tr>
 								</tbody>
+							</table>
+						</div>
+
+						<div style="text-align:center;">
+							<br>
+							<button @click="crearPedido" class="btn btn-success">Crear Pedido</button>
+						</div>
+						<br>
+
+					</div>
+				</div>
+
+
+				<br>
+				<br>
+				<div style="text-align:center ;">
+					<h4>
+						Seguimiento de los Pedidos</h4>
+				</div>
+				<br>
+
+				<table class="table table-striped" style="text-align: center;border: 1px;width:100%">
+					<thead style="background-color:black;color:aliceblue">
+						<tr>
+							<th>ID</th>
+							<th>CODIGO</th>
+							<th>DEPARTAMENTO</th>
+							<th>MUNICIPIO</th>
+							<th>VER PRODUCTOS</th>
+							<th>TOTAL DEL PEDIDO</th>
+							<th>ACCIONES</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						<tr v-for="(pedido, index) in pedidos">
+							<td>
+								<div>${pedido.id}</div>
+							</td>
+							<td>
+								<div v-if="!pedido.editar">${pedido.codigo}</div>
+								<input v-else-if="pedido.editar" v-model="pedido.codigo" type="text">
+							</td>
+							<td style="width: 30%;">
+
+								<div v-if="!pedido.editar">${pedido.departamento}</div>
+								<select class="form-select" v-else-if="pedido.editar" v-model="pedido.departamento" type="text" style="width:50% ;">
+									<option selected></option>
+									<option v-for="departamento in departamentos">
+										${departamento.nombre}</option>
+								</select>
+							</td>
+							<td>
+
+								<div v-if="!pedido.editar">${pedido.municipio}</div>
+								<select class="form-select" v-else-if="pedido.editar" v-model="pedido.municipio" style="width:50% ;">
+									<option selected></option>
+									<option v-if="dane.departamento == pedido.departamento" v-for="dane in dane">
+										${dane.municipio}</option>
+								</select>
+							</td>
+
+
+							<td>
+								<button @click="modalProductos(pedido)" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalMostrarProductos">
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewbox="0 0 16 16">
+										<path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+									</svg>
+								</button>
+							</td>
+
+							<td>
+
+								<div>
+									$ ${pedido.totalPedido} pesos
+								</div>
+							</td>
+
+
+							<td>
+								{# <button v-if="estadoId!=pedido.id" type="button" @click="editPedido(1,pedido.id,0)" class="btn btn-warning">Editar</button>
+																																																																																																								<button v-if="estadoId!=pedido.id" @click="deletePedido(pedido.id)" class="btn btn-danger">Eliminar</button>
+																																																																																																
+																																																																																																								<button v-if="estadoId==pedido.id" @click="editPedido(0,0,pedido)" class="btn btn-success">Guardar</button>
+																																																																																																								<button v-if="estadoId==pedido.id" @click="editPedido(0,0,0)" class="btn btn-danger">Cancelar</button> #}
+
+								<button v-if="!pedido.editar" class="btn btn-warning" @click="editarPedido(index)">
+									Editar
+								</button>
+								<button v-if="pedido.editar" @click="guardarEdicion(pedido)" class="btn btn-success">Guardar</button>
+								<button v-if="pedido.editar" @click="getPedidos" class="btn btn-danger">Cancelar</button>
 							</td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
-
-			<div style="text-align:center;">
-				<br>
-				<button @click="crearPedido" class="btn btn-success">Crear Pedido</button>
-			</div>
 			<br>
-
+			<br>
 		</div>
+
+
+		<!-- Modal de crear un producto-->
+		<div class="modal fade" id="modalMostrarProductos" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Productos</h5>
+					</div>
+
+					<div class="modal-body">
+
+						<div class="row">
+
+							<div class="col-3">
+								<h6>
+									Cliente:
+								</h6>
+							</div>
+
+							<div class="col-9">
+								${clienteEscogido.nombre}
+							</div>
+
+
+							<div class="col-3">
+								<h6>
+									Codigo:
+								</h6>
+							</div>
+
+							<div class="col-9">
+								${this.pedidoModal.codigo}
+							</div>
+
+							<div class="col-3">
+								<h6>
+									Departamento:
+								</h6>
+							</div>
+
+
+							<div class="col-9">
+								${this.pedidoModal.departamento}
+							</div>
+
+							<div class="col-3">
+								<h6>
+									municipio:
+								</h6>
+							</div>
+
+
+							<div class="col-9">
+								${this.pedidoModal.municipio}
+							</div>
+
+						</div>
+
+						<table class="table">
+							<thead>
+								<tr>
+									<th scope="col">Nombre</th>
+									<th scope="col">Codigo</th>
+									<th scope="col">Precio por Unidad</th>
+									<th scope="col">Cantidad</th>
+								</tr>
+							</thead>
+							<tbody>
+
+								<tr v-for="producto in this.productosAgregados">
+									<td>${producto.nombreP}</td>
+
+									<td>${producto.codigo}</td>
+
+									<td>${producto.precio}</td>
+
+									<td>${producto.cantidadProducto}</td>
+
+								</tr>
+
+							</tbody>
+						</table>
+
+
+						<div style="text-align:center; background-color:green; color:aliceblue"> 
+						
+						 Total Pedido:   ${this.pedidoModal.totalPedido}
+						
+						</div>
+
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+
 	</div>
-
-
-	<br>
-	<br>
-	<div style="text-align:center ;">
-		<h4>
-			Seguimiento de los Pedidos</h4>
-	</div>
-	<br>
-
-	<table class="table table-striped" style="text-align: center;border: 1px;width:100%">
-		<thead style="background-color:black;color:aliceblue">
-			<tr>
-				<th>ID</th>
-				<th>
-					CODIGO</th>
-				<th>DEPARTAMENTO</th>
-				<th>MUNICIPIO</th>
-				<th>VER PRODUCTOS</th>
-				<th>ACCIONES</th>
-			</tr>
-		</thead>
-
-		<tbody>
-			<tr v-for="pedido in pedidos">
-				<td>
-					<div>${pedido.id}</div>
-				</td>
-				<td>
-					<div v-if="estadoId!=pedido.id">${pedido.codigo}</div>
-					<input v-else-if="estadoId==pedido.id" v-model="pedido.codigo" type="text">
-				</td>
-				<td style="width: 30%;">
-
-					<div v-if="estadoId!=pedido.id">${pedido.departamento}</div>
-					<select class="form-select" v-else-if="estadoId==pedido.id" v-model="pedido.departamento" type="text" style="width:50% ;">
-						<option selected></option>
-						<option v-for="departamento in departamentos">
-							${departamento.nombre}</option>
-					</select>
-				</td>
-				<td>
-
-					<div v-if="estadoId!=pedido.id">${pedido.municipio}</div>
-					<select class="form-select" v-else-if="estadoId==pedido.id" v-model="pedido.municipio" style="width:50% ;">
-						<option selected></option>
-						<option v-if="dane.departamento == pedido.departamento" v-for="dane in dane">
-							${dane.municipio}</option>
-					</select>
-				</td>
-
-
-				<td>
-					<button @click="" type="button" class="btn btn-success">
-						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewbox="0 0 16 16">
-							<path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-						</svg>
-					</button>
-				</td>
-				<td>
-					<button v-if="estadoId!=pedido.id" type="button" @click="editPedido(1,pedido.id,0)" class="btn btn-warning">Editar</button>
-					<button v-if="estadoId!=pedido.id" @click="deletePedido(pedido.id)" class="btn btn-danger">Eliminar</button>
-
-					<button v-if="estadoId==pedido.id" @click="editPedido(0,0,pedido)" class="btn btn-success">Guardar</button>
-					<button v-if="estadoId==pedido.id" @click="editPedido(0,0,0)" class="btn btn-danger">Cancelar</button>
-				</td>
-			</tr>
-		</tbody>
-	</table>
-</div>
-<br>
-<br>
-<br></div></div>{% endblock %}
+{% endblock %}

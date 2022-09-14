@@ -45,7 +45,7 @@ class PedidoRepository extends ServiceEntityRepository
     public function PedidoConsecutivo($id)
     {
         return $this->getEntityManager()
-            ->createQuery("SELECT distinct pedido.consecutivo as id, pedido.codigo, pedido.departamento, pedido.municipio
+            ->createQuery("SELECT distinct pedido.consecutivo as id, pedido.codigo, pedido.departamento, pedido.municipio, pedido.totalPedido
             FROM  App\Entity\Pedido AS pedido INNER JOIN App\Entity\Cliente AS cliente WITH pedido.cliente = cliente.id 
             WHERE cliente.id = :identificador
             --GROUP BY pedido.consecutivo, pedido.codigo, pedido.departamento, pedido.municipio
@@ -53,6 +53,21 @@ class PedidoRepository extends ServiceEntityRepository
             ->setParameter('identificador', $id)
             ->getResult();
     }
+
+
+    public function buscarProductoPorPedido($id)
+    {
+        return $this->getEntityManager()
+            ->createQuery("SELECT  producto.codigo, producto.nombreP, producto.precio, pedido.cantidadProducto, pedido.totalPedido
+            FROM  App\Entity\Producto AS producto INNER JOIN App\Entity\Pedido AS pedido WITH producto.id = pedido.producto 
+            WHERE pedido.consecutivo = :identificador")
+            ->setParameter('identificador', $id)
+            ->getResult();
+    }
+
+
+
+
 
     //    /**
     //     * @return Pedido[] Returns an array of Pedido objects

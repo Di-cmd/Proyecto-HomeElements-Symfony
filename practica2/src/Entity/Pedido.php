@@ -50,7 +50,18 @@ class Pedido
      */
     private $consecutivo;
 
-   
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $totalPedido;
+
+
+     /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $cantidadProducto;
+
+
 
 
     public function __construct()
@@ -137,5 +148,37 @@ class Pedido
 
         return $this;
     }
+
+
+    
+    public function getTotalPedido(): ?string
+    {
+        return $this->totalPedido;
+    }
+
+    public function setTotalPedido(string $totalPedido): self
+    {
+        $this->totalPedido = $totalPedido;
+
+        return $this;
+    }
+
+
+
+
+    public function getCantidadProducto(): ?string
+    {
+        return $this->cantidadProducto;
+    }
+
+    public function setCantidadProducto(string $cantidadProducto): self
+    {
+        $this->cantidadProducto = $cantidadProducto;
+        return $this;
+    }
+
+
+
+
 
 }

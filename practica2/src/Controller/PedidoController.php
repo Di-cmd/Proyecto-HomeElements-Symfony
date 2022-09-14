@@ -35,7 +35,7 @@ class PedidoController extends AbstractController
     public function getPedidos($id, ManagerRegistry $doctrine)
     {
         //Lo convierto a numerico:
-        $id=intval($id);
+        $id = intval($id);
         $pedidosAlmacenados = $this->getDoctrine()->getRepository(Pedido::class)->PedidoConsecutivo($id);
         //dd($pedidosAlmacenados);
         $array = [];
@@ -46,6 +46,7 @@ class PedidoController extends AbstractController
                 'codigo' => $pedidosAlmacenados[$i]['codigo'],
                 'departamento' => $pedidosAlmacenados[$i]['departamento'],
                 'municipio' => $pedidosAlmacenados[$i]['municipio'],
+                'totalPedido' => $pedidosAlmacenados[$i]['totalPedido'],
             ];
         }
         return new JsonResponse(['pedidos' => $array]);
@@ -71,22 +72,33 @@ class PedidoController extends AbstractController
         }
 
         $data = json_decode($request->getContent(), true);
-        $idCliente=$data['cliente'];
+        $idCliente = $data['cliente'];
         $cliente = $this->getDoctrine()->getRepository(Cliente::class)->find($idCliente);
 
         for ($i = 0; $i < count($data['productoAgregado']); $i++) {
             $entityManager = $this->getDoctrine()->getManager();
-            $pedido = new Pedido();
             $idProducto = $data['productoAgregado'][$i]['idProducto'];
             $producto = $this->getDoctrine()->getRepository(Producto::class)->find($idProducto);
-
-            // se agrega un nuevo pedido: 
+            
+            // MANTENER ACTUALIZADO EL INVENTARIO DE PRODUCTOS: 
+            $cantidadExistenteProducto = intval($producto->getCantidad());
+            $cantidadProductoPedido = intval($data['productoAgregado'][$i]['cantidadProducto']);
+            $cantidadExistenteActualizada = $cantidadExistenteProducto - $cantidadProductoPedido;
+            $producto->setCantidad($cantidadExistenteActualizada);
+            $entityManager->persist($producto);
+            $entityManager->flush();
+            // Esto me permite Mantener actualizo el inventario de productos con las cantidades reales
+    
+            // AGREGAR UN NUEVO PEDIDO- LO CREA SEGUN LA CANTIDAD DE PRODUCTOS QUE HAYA. 
+            $pedido = new Pedido();
             $pedido->setCodigoPedido($data['codigo']);
             $pedido->setDepartamento($data['departamento']);
             $pedido->setMunicipio($data['municipio']);
             $pedido->setProducto($producto);
             $pedido->setConsecutivo($incrementa);
             $pedido->setCliente($cliente);
+            $pedido->setTotalPedido($data['totalPedido']);
+            $pedido->setCantidadProducto($data['productoAgregado'][$i]['cantidadProducto']);
             $entityManager->persist($pedido);
             $entityManager->flush();
         }
@@ -111,24 +123,67 @@ class PedidoController extends AbstractController
     public function editarPedido(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
-        $pedidoEditar = $this->getDoctrine()->getRepository(Pedido::class)->find($data['id']);
         $entityManager = $this->getDoctrine()->getManager();
-        $pedidoEditar->setgetCodigoPedido($data['codigo']);
-        $pedidoEditar->setDepartamento($data['departamento']);
-        $pedidoEditar->setMunicipio($data['municipio']);
-        $entityManager->persist($pedidoEditar);
-        $entityManager->flush();
+
+        // dd($data['codigo'],$data['departamento'],$data['municipio']);
+        $pedidoEditar = $this->getDoctrine()->getRepository(Pedido::class)->findBy(['consecutivo'=>$data['id']]);
+
+        for($i = 0;$i < count($pedidoEditar); $i++){
+            $pedidoEditar[$i]->setCodigoPedido($data['codigo']);
+            $pedidoEditar[$i]->setDepartamento($data['departamento']);
+            $pedidoEditar[$i]->setMunicipio($data['municipio']);
+            $entityManager->persist($pedidoEditar[$i]);
+            $entityManager->flush();
+        }
+       
         return new JsonResponse(['mensaje' => "Se Edito el pedido con exito"]);
     }
 
-    /**
-     * @Route("/pedidoCliente/{id}", name="pedidoCliente")
+
+
+
+
+
+        /**
+     * @Route("/buscarProductos/{id}", name="editarPedido")
      */
-    public function pedidoCliente(Cliente $cliente, Request $request): Response
+    public function buscarProductos($id,Request $request): Response
     {
-        //dd($cliente);
-        return $this->render('pedido/pedido.html.twig', [
-            'controller_name' => 'PedidoController',
-        ]);
+        $productoPorPedido = $this->getDoctrine()->getRepository(Pedido::class)->buscarProductoPorPedido($id);
+        return new JsonResponse(['productosAsociados' => $productoPorPedido]);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // /**
+    //  * @Route("/pedidoCliente/{id}", name="pedidoCliente")
+    //  */
+    // public function pedidoCliente(Cliente $cliente, Request $request): Response
+    // {
+    //     //dd($cliente);
+    //     return $this->render('pedido/pedido.html.twig', [
+    //         'controller_name' => 'PedidoController',
+    //     ]);
+    // }
+
+
+
+
+
+
+
 }
