@@ -28,24 +28,24 @@ new Vue({
     disponible: true,
     clienteEscogido: "",
     productosAgregados: [],
-    pedidoModal:{}
+    pedidoModal: {},
+    existeProducto: false,
   },
   mounted() {
     this.getClientes(), this.getDepartamentos(), this.getProductos();
-  
   },
 
   methods: {
-
-
-     async getProductos() {
+    async getProductos() {
       let productos = await axios.get(productoJSON);
-      for(i=0; i < productos.data.productos.length; i++) {
-        if(productos.data.productos[i].estado=="Activo" && productos.data.productos[i].cantidad>0 ){
+      for (i = 0; i < productos.data.productos.length; i++) {
+        if (
+          productos.data.productos[i].estado == "Activo" &&
+          productos.data.productos[i].cantidad > 0
+        ) {
           this.productos.push(productos.data.productos[i]);
         }
       }
-
     },
 
     async getPedidos() {
@@ -58,9 +58,6 @@ new Vue({
           editar: false,
         };
       });
-
-      console.log(this.formPedidos["cliente"]);
-
       this.clienteEscogido = this.clientes.find(
         (cliente) => cliente.id === this.formPedidos["cliente"]
       );
@@ -87,10 +84,18 @@ new Vue({
     },
 
     async crearPedido() {
-      this.formPedidos.totalPedido = this.formPedidos.productoAgregado.reduce(
-        (prev, curr) => prev + curr.precioTotal,0);
+    if (this.formPedidos.codigo != "" && this.formPedidos.departamento!= ""
+      && this.formPedidos.municipio != "" && this.formPedidos.productoAgregado.length>0  ) {
 
-      let crearPedido = await axios.post("http://127.0.0.1:8080/crearPedido",this.formPedidos);
+      this.formPedidos.totalPedido = this.formPedidos.productoAgregado.reduce(
+        (prev, curr) => prev + curr.precioTotal,
+        0
+      );
+
+      let crearPedido = await axios.post(
+        "http://127.0.0.1:8080/crearPedido",
+        this.formPedidos
+      );
       this.mensajeGuardado = crearPedido.data.mensaje;
       this.getPedidos();
 
@@ -102,12 +107,17 @@ new Vue({
       this.formPedidos.cantidadProducto = 0;
       this.formPedidos.totalPedido = 0;
       this.formPedidos.productoAgregado = [];
+
+    } else {
+      alert("Por favor debe diligenciar todos los campos");
+    }
+
     },
 
     async getClientes() {
       let clientes = await axios.get("http://127.0.0.1:8080/clienteJSON");
-      for(i=0; i < clientes.data.clientes.length; i++) {
-        if(clientes.data.clientes[i].estado=="Activo"){
+      for (i = 0; i < clientes.data.clientes.length; i++) {
+        if (clientes.data.clientes[i].estado == "Activo") {
           this.clientes.push(clientes.data.clientes[i]);
         }
       }
@@ -161,7 +171,9 @@ new Vue({
       this.getPedidos();
     },
 
-    async agregarProducto() {
+    async agregarProducto(nombreProducto) {
+
+      if ( this.formPedidos.productoSeleccionado.nombre !="" && this.formPedidos.cantidadProducto > 0) {
       let Pagregado = {
         idProducto: this.formPedidos.productoSeleccionado.id,
         nombreProducto: this.formPedidos.productoSeleccionado.nombre,
@@ -179,7 +191,13 @@ new Vue({
       this.formPedidos.cantidadProducto = 0;
       this.precioUnitario = 0;
       this.precioTotalProductos = 0;
-    },
+    }
+
+    else {
+      alert("Por favor debe diligenciar todos los campos");
+    }
+
+  },
 
     async eliminarProducto(producto) {
       this.formPedidos.productoAgregado.splice(producto.id, 1);
@@ -193,17 +211,47 @@ new Vue({
     },
 
     async modalProductos(pedido) {
-
-      this.pedidoModal=pedido;
+      this.pedidoModal = pedido;
 
       console.log(this.pedidoModal);
 
-      let pedidos = await axios("http://127.0.0.1:8080/buscarProductos/"+ pedido.id);
+      let pedidos = await axios(
+        "http://127.0.0.1:8080/buscarProductos/" + pedido.id
+      );
       this.mensajeGuardado = pedidos.data.productosAsociados;
-      this.productosAgregados=this.mensajeGuardado;
+      this.productosAgregados = this.mensajeGuardado;
     },
 
 
+
+    validarNombre(e, index, lon) {
+      const regex = new RegExp(`^[a-zA-Z]{0,${lon}}$`, 'g');
+      this.rojitoClientes = false
+
+      if(!regex.test(`${this.formPedidos[index]}${e.key}`)) {
+        this.rojitoClientes = true
+        e.preventDefault()
+        return false
+      }
+      
+      return true
+    },
+
+
+    validarCodigo(e, index, lon) {
+      const regex = new RegExp(`^[A-Za-z0-9\s]{0,${lon}}$`, 'g');
+      this.rojitoClientes = false
+      if(!regex.test(`${this.formPedidos[index]}${e.key}`)) {
+        this.rojitoClientes = true
+        e.preventDefault()
+        return false
+      }
+      
+      return true
+    }
+
+
+    
   },
 
   computed: {
@@ -214,5 +262,16 @@ new Vue({
         return prev + curr.precioTotal;
       }, 0);
     },
+
+    NoAgregados() {
+      console.log(this.productosAgregados);
+      // Modificando con map
+    },
+
+
   },
+
+
+
+
 });

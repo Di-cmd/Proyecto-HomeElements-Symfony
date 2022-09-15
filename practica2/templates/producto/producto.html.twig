@@ -77,10 +77,13 @@ const crearProducto = "{{ path('crearProducto') }}";
 						<td></td>
 
 						<td>
-							<input class="form-control" v-model="formProductos.nombre" type="text"/>
+							<input class="form-control"
+							 v-model="formProductos.nombre" 
+							 type="text" 
+							 @keypress="validarNombre($event, 'nombre', 20)" />
 						</td>
 						<td>
-							<input class="form-control" v-model="formProductos.codigo" type="number"/>
+							<input class="form-control" @keypress="validarCodigo($event, 'codigo', 20)" v-model="formProductos.codigo" type="text"/>
 						</td>
 
 						<td>
@@ -93,9 +96,9 @@ const crearProducto = "{{ path('crearProducto') }}";
 							</select>
 						</td>
 
-						<td><input class="form-control" v-model="formProductos.precio" type="number"/></td>
+						<td><input class="form-control" v-model="formProductos.precio" min="0" max="13000000" type="number"/></td>
 
-						<td><input class="form-control" v-model="formProductos.cantidad" type="number"/></td>
+						<td><input class="form-control" v-model="formProductos.cantidad" min="0" max="200" type="number"/></td>
 
 						<td>
 							<select class="form-select" v-model="formProductos.estado">

@@ -9,6 +9,7 @@ new Vue({
       municipio: "",
       estado:"",
     },
+    rojitoClientes: false,
     dataModal: {
       cliente: {
         id: 0,
@@ -64,6 +65,13 @@ new Vue({
     },
 
     async crearCliente() {
+
+
+
+      if (this.formClientes.nombre != "" && this.formClientes.municipio!= ""
+      && this.formClientes.correo != "" && this.formClientes.departamento!=""
+       && this.formClientes.estado !="" && this.formClientes.correo.length<64) {
+
       let crearCliente = await axios.post(
         "http://127.0.0.1:8080/crearCliente",
         this.formClientes
@@ -77,6 +85,11 @@ new Vue({
       this.formClientes.correo = "";
       this.formClientes.departamento = "";
       this.formClientes.municipio = "";
+
+    } else {
+      alert("Por favor debe diligenciar todos los campos");
+    }
+
     },
 
     //Para el metodo eliminar Tengo que mandar el parametro, por medio de la ruta
@@ -126,12 +139,32 @@ new Vue({
       this.dataModal.cliente.correo = cliente.correo
       let pedidos = await axios("http://127.0.0.1:8080/pedidoJSON/"+this.dataModal.cliente.id);
       this.dataModal.pedido = pedidos.data.pedidos;
-
-      
       console.log(this.dataModal.pedido);
+    },
 
+    validarNombre(e, index, lon) {
+      const regex = new RegExp(`^[a-zA-Z]{0,${lon}}$`, 'g');
+      this.rojitoClientes = false
 
+      if(!regex.test(`${this.formClientes[index]}${e.key}`)) {
+        this.rojitoClientes = true
+        e.preventDefault()
+        return false
+      }
+      
+      return true
+    },
 
+    validarCorreo(e, index, lon) {
+      const regex = new RegExp(`^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{0,${lon}}$`, 'g');
+      this.rojitoClientes = false
+      if(!regex.test(`${this.formClientes[index]}${e.key}`)) {
+        this.rojitoClientes = true
+        e.preventDefault()
+        return false
+      }
+      
+      return true
     }
   },
 

@@ -1,8 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Hello ProductoController!
-{%
-endblock %}
+{% endblock %}
 
 {% block body %}
 	<style>
@@ -21,6 +20,10 @@ endblock %}
 			text-align: center;
 			font: 18px / 1.5 sans-serif;
 			margin-bottom: 5%;
+		}
+
+		.rojito {
+			border-color: red !important;
 		}
 	</style>
 
@@ -75,12 +78,12 @@ const crearProducto = "{{ path('crearProducto') }}";
 						<td></td>
 
 						<td>
-							<input required v-model="formClientes.nombre" class="form-control" type="text"/>
+							<input required v-model="formClientes.nombre" @keypress="validarNombre($event, 'nombre', 20)" :class="{rojito: rojitoClientes}" class="form-control" type="text"/>
 						</td>
-						<td><input required v-model="formClientes.correo" class="form-control" type="email"/>
+						<td><input required v-model="formClientes.correo" class="form-control" type="email" maxlength="53"/>
+
 						</td>
 						<td>
-
 							<select required class="form-select" v-model="formClientes.departamento">
 								<option selected></option>
 								<option v-for="departamento in departamentos">
@@ -110,6 +113,8 @@ const crearProducto = "{{ path('crearProducto') }}";
 
 
 					</tr>
+
+
 					<tr v-for="cliente in clientes">
 						<td>
 							<div>${cliente.id}</div>

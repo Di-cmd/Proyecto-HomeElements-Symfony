@@ -85,7 +85,8 @@ let conse = 0;
 								<p>Codigo del pedido</p>
 							</div>
 							<div class="col-3">
-								<input required v-model="formPedidos.codigo" class="form-control" type="text"/>
+								<input required v-model="formPedidos.codigo" class="form-control" type="text"
+								@keypress="validarCodigo($event, 'codigo', 20)" />
 							</div>
 
 
@@ -132,8 +133,8 @@ let conse = 0;
 									<tr>
 										<td>
 											<select required @change="precioProducto()" class="form-select" v-model="formPedidos.productoSeleccionado">
-												<option selected></option>
-												<option v-for="producto in productos" :value="producto">
+												<option selected   value=""></option>
+												<option  v-for="producto in productos" :value="producto">
 													${producto.nombre}
 												</option>
 											</select>
@@ -148,7 +149,7 @@ let conse = 0;
 											${precioTotalProductos}
 										</td>
 										<td>
-											<button @click="agregarProducto" class="btn btn-dark">Agregar Producto</button>
+											<button @click="agregarProducto(formPedidos.productoSeleccionado)" class="btn btn-dark">Agregar Producto</button>
 										</td>
 
 
@@ -270,11 +271,7 @@ let conse = 0;
 
 
 							<td>
-								{# <button v-if="estadoId!=pedido.id" type="button" @click="editPedido(1,pedido.id,0)" class="btn btn-warning">Editar</button>
-																																																																																																								<button v-if="estadoId!=pedido.id" @click="deletePedido(pedido.id)" class="btn btn-danger">Eliminar</button>
-																																																																																																
-																																																																																																								<button v-if="estadoId==pedido.id" @click="editPedido(0,0,pedido)" class="btn btn-success">Guardar</button>
-																																																																																																								<button v-if="estadoId==pedido.id" @click="editPedido(0,0,0)" class="btn btn-danger">Cancelar</button> #}
+								{# <button v-if="estadoId!=pedido.id" type="button" @click="editPedido(1,pedido.id,0)" class="btn btn-warning">Editar</button>																																																																																																																																																																		<button v-if="estadoId==pedido.id" @click="editPedido(0,0,pedido)" class="btn btn-success">Guardar</button>																																																																																																<button v-if="estadoId==pedido.id" @click="editPedido(0,0,0)" class="btn btn-danger">Cancelar</button> #}
 
 								<button v-if="!pedido.editar" class="btn btn-warning" @click="editarPedido(index)">
 									Editar
