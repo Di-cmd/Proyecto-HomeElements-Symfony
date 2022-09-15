@@ -32,14 +32,20 @@ new Vue({
   },
   mounted() {
     this.getClientes(), this.getDepartamentos(), this.getProductos();
+  
   },
+
   methods: {
-    getProductos() {
-      fetch(productoJSON)
-        .then((response) => response.json())
-        .then((response) => {
-          this.productos = response.productos;
-        });
+
+
+     async getProductos() {
+      let productos = await axios.get(productoJSON);
+      for(i=0; i < productos.data.productos.length; i++) {
+        if(productos.data.productos[i].estado=="Activo" && productos.data.productos[i].cantidad>0 ){
+          this.productos.push(productos.data.productos[i]);
+        }
+      }
+
     },
 
     async getPedidos() {
@@ -100,7 +106,11 @@ new Vue({
 
     async getClientes() {
       let clientes = await axios.get("http://127.0.0.1:8080/clienteJSON");
-      this.clientes = clientes.data.clientes;
+      for(i=0; i < clientes.data.clientes.length; i++) {
+        if(clientes.data.clientes[i].estado=="Activo"){
+          this.clientes.push(clientes.data.clientes[i]);
+        }
+      }
     },
 
     async editarPedido(index) {

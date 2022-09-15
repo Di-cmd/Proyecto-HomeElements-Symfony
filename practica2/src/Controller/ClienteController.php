@@ -47,6 +47,7 @@ class ClienteController extends AbstractController
                 'correo'=>$clientesAlmacenados[$i]->getCorreo(),
                 'departamento'=>$clientesAlmacenados[$i]->getDepartamento(),
                 'municipio'=>$clientesAlmacenados[$i]->getMunicipio(),
+                'estado'=>$clientesAlmacenados[$i]->getEstado(),
            ];
         }
         return new JsonResponse(['clientes' => $array]);
@@ -67,6 +68,7 @@ class ClienteController extends AbstractController
         $cliente->setCorreo($data['correo']);
         $cliente->setDepartamento($data['departamento']);
         $cliente->setMunicipio($data['municipio']);
+        $cliente->setEstado($data['estado']);
         $entityManager->persist($cliente);
         $entityManager->flush();
         return new JsonResponse(['mensaje' => "Se creo el cliente con exito"]);
@@ -105,6 +107,7 @@ class ClienteController extends AbstractController
         $clienteEditar->setCorreo($data['correo']);
         $clienteEditar->setDepartamento($data['departamento']);
         $clienteEditar->setMunicipio($data['municipio']);
+        $clienteEditar->setEstado($data['estado']);
         $entityManager->persist($clienteEditar);
         $entityManager->flush();
         return new JsonResponse(['mensaje' => "Se Edito el cliente con exito"]);

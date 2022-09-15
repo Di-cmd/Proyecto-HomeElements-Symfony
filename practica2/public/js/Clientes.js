@@ -7,6 +7,7 @@ new Vue({
       correo: "",
       departamento: "",
       municipio: "",
+      estado:"",
     },
     dataModal: {
       cliente: {

@@ -53,6 +53,13 @@ class Producto
      */
     private $pedido;
 
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $estado;
+
+    
     public function __construct()
     {
         $this->pedido = new ArrayCollection();
@@ -129,6 +136,26 @@ class Producto
         return $this;
     }
 
+
+    public function getEstado(): ?string
+    {
+        return $this->estado;
+    }
+
+
+    public function setEstado(string $estado): self
+    {
+        $this->estado = $estado;
+        return $this;
+    }
+
+
+
+
+
+
+
+
     /**
      * @return Collection<int, Pedido>
      */
@@ -158,6 +185,4 @@ class Producto
 
         return $this;
     }
-
-
 }

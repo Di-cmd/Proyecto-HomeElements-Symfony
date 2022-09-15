@@ -5,6 +5,7 @@ let formProductos = {
   cantidad: 0,
   precio: 0,
   categoria:"",
+  estado:"",
 }
 
 new Vue({
@@ -19,6 +20,7 @@ new Vue({
     estadoId: 0,
     producto: 0,
     nuevoP: 0,
+    estadoP:true,
     
   },
   mounted() {
@@ -61,6 +63,8 @@ new Vue({
 
     //Para el metodo eliminar Tengo que mandar el parametro, por medio de la ruta
     async deleteProduct(id) {
+      this.estadoP=false;
+
       let eliminar = await axios("http://127.0.0.1:8080/deleteProducto/" + id, {
         method: "POST",
       });
@@ -72,6 +76,8 @@ new Vue({
 
     async editProduct(estado, idProducto, producto) {
 
+
+      console.log(producto)
       this.estadoEditar = estado;
       this.estadoId = idProducto;
       this.producto = producto;

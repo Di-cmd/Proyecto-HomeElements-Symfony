@@ -19,6 +19,20 @@ endblock %}
 			text-align: center;
 			width: 100%;
 		}
+
+		.back-red {
+			width: 100px;
+			height: 100px;
+			background-color: red;
+		}
+
+
+		.back-blue {
+			/* fondo azul */
+			width: 100px;
+			height: 100px;
+			background-color: blue;
+		}
 	</style>
 
 	{# Desde aca estoy llamando al script que permite conectar el Vue JS #}
@@ -31,12 +45,12 @@ const crearProducto = "{{ path('crearProducto') }}";
 
 	<div id="app">
 		<div class="container" style="margin-bottom:10%;">
-			<div  style="text-align: center; margin-bottom: 5%;margin-top: 5%;">
+			<div style="text-align: center; margin-bottom: 5%;margin-top: 5%;">
 				<h1>Inventario de Productos</h1>
 			</div>
 
 			<div>
-				<button @click="nuevoProducto(1)"  class="btn btn-success">Crear Producto</button>
+				<button @click="nuevoProducto(1)" class="btn btn-success">Crear Producto</button>
 			</div>
 
 
@@ -51,6 +65,7 @@ const crearProducto = "{{ path('crearProducto') }}";
 						<th>CATEGORIA</th>
 						<th>PRECIO</th>
 						<th>CANTIDAD DISPONIBLE</th>
+						<th>ESTADO</th>
 						<th colspan="2">ACCIONES</th>
 					</tr>
 
@@ -58,7 +73,7 @@ const crearProducto = "{{ path('crearProducto') }}";
 				</thead>
 
 				<tbody>
-					<tr v-if="nuevoP==1" >
+					<tr v-if="nuevoP==1">
 						<td></td>
 
 						<td>
@@ -83,8 +98,15 @@ const crearProducto = "{{ path('crearProducto') }}";
 						<td><input class="form-control" v-model="formProductos.cantidad" type="number"/></td>
 
 						<td>
+							<select class="form-select" v-model="formProductos.estado">
+								<option selected></option>
+								<option value="Activo">Activo</option>
+								<option value="Inactivo">Inactivo</option>
+							</select>
+						</td>
+						<td>
 							<button @click="crearProducto" class="btn btn-success">Crear</button>
-							<button  @click="nuevoProducto(0)" class="btn btn-danger">Cancelar</button>
+							<button @click="nuevoProducto(0)" class="btn btn-danger">Cancelar</button>
 						</td>
 					</tr>
 
@@ -95,15 +117,21 @@ const crearProducto = "{{ path('crearProducto') }}";
 						</td>
 						<td>
 							<div v-if="estadoId!=producto.id">${producto.nombre}</div>
-							<input v-else-if="estadoId==producto.id" v-model="producto.nombre" type="text">
+							<input v-else-if="estadoId==producto.id" v-model="producto.nombre" type="text" style="width: 200px;">
 						</td>
 						<td>
 							<div v-if="estadoId!=producto.id">${producto.codigo}</div>
 							<input v-else-if="estadoId==producto.id" v-model="producto.codigo" type="number">
 						</td>
 						<td>
-							<div v-if="estadoId!=producto.id">${producto.categoria}</div>	
-							<input v-else-if="estadoId==producto.id" v-model="producto.categoria" type="text">
+							<div v-if="estadoId!=producto.id">${producto.categoria}</div>
+							<select class="form-select" v-else-if="estadoId==producto.id" v-model="producto.categoria">
+								<option selected></option>
+								<option value="Hogar">Hogar</option>
+								<option value="Electrodomesticos">Electrodomesticos</option>
+								<option value="Tecnologia">Tecnologia</option>
+								<option value="Ropa">Ropa</option>
+							</select>
 						</td>
 
 						<td>
@@ -112,15 +140,27 @@ const crearProducto = "{{ path('crearProducto') }}";
 						</td>
 
 
-
 						<td>
 							<div v-if="estadoId!=producto.id">${producto.cantidad}</div>
 							<input v-else-if="estadoId==producto.id" v-model="producto.cantidad" min="0" :max="500" type="number">
 						</td>
 
+
+						<td  >
+							<div v-if="estadoId!=producto.id">${producto.estado}</div>
+							<select v-else-if="estadoId==producto.id" class="form-select" v-model="producto.estado">
+								<option selected></option>
+								<option value="Activo">Activo</option>
+								<option value="Inactivo">Inactivo</option>
+							</select>
+						</td>
+
+
 						<td>
 							<button v-if="estadoId!=producto.id" type="button" @click="editProduct(1,producto.id,0)" class="btn btn-warning">Editar</button>
-							<button v-if="estadoId!=producto.id" @click="deleteProduct(producto.id)" class="btn btn-danger">Eliminar</button>
+
+							{# Se retira el boton porque debido a las relaciones ya no se puede eliminar #}
+							{# <button v-if="estadoId!=producto.id" @click="deleteProduct(producto.id)" class="btn btn-danger">Deshabilitar</button> #}
 
 							<button v-if="estadoId==producto.id" type="button" @click="editProduct(0,0,producto)" class="btn btn-success">Guardar</button>
 							<button v-if="estadoId==producto.id" @click="editProduct(0,0,0)" class="btn btn-danger">Cancelar</button>

@@ -62,6 +62,7 @@ const crearProducto = "{{ path('crearProducto') }}";
 						<th>CORREO</th>
 						<th>DEPARTAMENTO</th>
 						<th>MUNICIPIO</th>
+						<th>ESTADO</th>
 						<th>VER PEDIDOS</th>
 						<th colspan="3">ACCIONES</th>
 					</tr>
@@ -93,6 +94,14 @@ const crearProducto = "{{ path('crearProducto') }}";
 									${dane.municipio}</option>
 							</select>
 						</td>
+						<td>
+							<select class="form-select" v-model="formClientes.estado">
+								<option selected></option>
+								<option value="Activo">Activo</option>
+								<option value="Inactivo">Inactivo</option>
+							</select>
+						</td>
+
 						<td></td>
 						<td colspan="3">
 							<button @click="crearCliente" class="btn btn-success">Crear</button>
@@ -135,6 +144,14 @@ const crearProducto = "{{ path('crearProducto') }}";
 
 						</td>
 
+						<td>
+							<div v-if="estadoId!=cliente.id">${cliente.estado}</div>
+							<select v-else-if="estadoId==cliente.id" class="form-select" v-model="cliente.estado">
+								<option selected></option>
+								<option value="Activo">Activo</option>
+								<option value="Inactivo">Inactivo</option>
+							</select>
+						</td>
 
 						<td>
 							<button @click="modalPedidos(cliente)" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCrearPedido">
@@ -146,7 +163,9 @@ const crearProducto = "{{ path('crearProducto') }}";
 						</td>
 						<td>
 							<button v-if="estadoId!=cliente.id" type="button" @click="editCliente(1,cliente.id,0)" class="btn btn-warning">Editar</button>
-							<button v-if="estadoId!=cliente.id" @click="deleteCliente(cliente.id)" class="btn btn-danger">Eliminar</button>
+
+							{# 	Se quita el boton, porque ya no se puede eliminar por las relaciones:  #}
+							{# <button v-if="estadoId!=cliente.id" @click="deleteCliente(cliente.id)" class="btn btn-danger">Eliminar</button> #}
 
 							<button v-if="estadoId==cliente.id" @click="editCliente(0,0,cliente)" class="btn btn-success">Guardar</button>
 							<button v-if="estadoId==cliente.id" @click="editCliente(0,0,0)" class="btn btn-danger">Cancelar</button>
@@ -202,7 +221,8 @@ const crearProducto = "{{ path('crearProducto') }}";
 										<th scope="col">codigo</th>
 										<th scope="col">Departamento</th>
 										<th scope="col">Municipio</th>
-										<th scope="col">Total del Pedido $ </th>
+										<th scope="col">Total del Pedido $
+										</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -211,7 +231,9 @@ const crearProducto = "{{ path('crearProducto') }}";
 										<td>${pedido.codigo}</td>
 										<td>${pedido.departamento}</td>
 										<td>${pedido.municipio}</td>
-										<td> $ ${pedido.totalPedido} pesos </td>
+										<td>
+											$ ${pedido.totalPedido} pesos
+										</td>
 									</tr>
 								</tbody>
 							</table>

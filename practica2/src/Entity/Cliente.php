@@ -29,13 +29,13 @@ class Cliente
      */
     private $correo;
 
-        /**
+    /**
      * @ORM\Column(type="string", length=255)
      */
     private $departamento;
 
 
-        /**
+    /**
      * @ORM\Column(type="string", length=255)
      */
     private $municipio;
@@ -45,6 +45,13 @@ class Cliente
      * @ORM\OneToMany(targetEntity=Pedido::class, mappedBy="cliente")
      */
     private $pedido;
+
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $estado;
+
 
 
 
@@ -109,6 +116,22 @@ class Cliente
 
         return $this;
     }
+
+
+
+    public function getEstado(): ?string
+    {
+        return $this->estado;
+    }
+
+
+    public function setEstado(string $estado): self
+    {
+        $this->estado = $estado;
+        return $this;
+    }
+
+
 
 
     /**

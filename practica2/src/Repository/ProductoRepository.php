@@ -45,7 +45,7 @@ class ProductoRepository extends ServiceEntityRepository
     {
         // EJ 1
         return $this->getEntityManager()
-        ->createQuery('SELECT producto.id, producto.nombreP, producto.codigo, producto.cantidad, producto.precio, categoria.nombre
+        ->createQuery('SELECT producto.id, producto.nombreP, producto.codigo, producto.cantidad, producto.precio, producto.estado, categoria.nombre
          FROM  App\Entity\Producto AS producto INNER JOIN App\Entity\Categoria AS categoria  
          WITH producto.categoria = categoria.id' )->getResult();
 

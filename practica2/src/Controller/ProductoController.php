@@ -66,6 +66,7 @@ class ProductoController extends AbstractController
                 'categoria'=>$productosAlmacenados[$i]['nombre'],
                 'cantidad'=>$productosAlmacenados[$i]['cantidad'],
                 'precio'=>$productosAlmacenados[$i]['precio'],
+                'estado'=>$productosAlmacenados[$i]['estado'],
            ];
         }
         
@@ -97,6 +98,7 @@ class ProductoController extends AbstractController
         $producto->setCodigo($data['codigo']);
         $producto->setCantidad($data['cantidad']);
         $producto->setPrecio($data['precio']);
+        $producto->setEstado($data['estado']);
         $producto->setCategoria($categoria);
         $entityManager->persist($producto);
         $entityManager->flush();
@@ -139,6 +141,7 @@ class ProductoController extends AbstractController
         $productoEditar->setCodigo($data['codigo']);
         $productoEditar->setCantidad($data['cantidad']);
         $productoEditar->setPrecio($data['precio']);
+        $productoEditar->setEstado($data['estado']);
         $entityManager->persist($productoEditar);
         $entityManager->flush();
         return new JsonResponse(['mensaje' => "Se Edito el producto con exito"]);
