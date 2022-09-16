@@ -88,7 +88,7 @@ const crearProducto = "{{ path('crearProducto') }}";
 
 						<td>
 							<select class="form-select" v-model="formProductos.categoria">
-								<option selected></option>
+								<option hidden selected></option>
 								<option value="Hogar">Hogar</option>
 								<option value="Electrodomesticos">Electrodomesticos</option>
 								<option value="Tecnologia">Tecnologia</option>
@@ -96,13 +96,13 @@ const crearProducto = "{{ path('crearProducto') }}";
 							</select>
 						</td>
 
-						<td><input class="form-control" v-model="formProductos.precio" min="0" max="13000000" type="number"/></td>
+						<td><input class="form-control" v-model="formProductos.precio"  @keypress="validarCantidad($event, 'precio', 15)" type="text"/></td>
 
-						<td><input class="form-control" v-model="formProductos.cantidad" min="0" max="200" type="number"/></td>
+						<td><input class="form-control" v-model="formProductos.cantidad" @keypress="validarCantidad($event, 'cantidad', 10)" type="text"/></td>
 
 						<td>
 							<select class="form-select" v-model="formProductos.estado">
-								<option selected></option>
+								<option hidden selected></option>
 								<option value="Activo">Activo</option>
 								<option value="Inactivo">Inactivo</option>
 							</select>
@@ -120,16 +120,21 @@ const crearProducto = "{{ path('crearProducto') }}";
 						</td>
 						<td>
 							<div v-if="estadoId!=producto.id">${producto.nombre}</div>
-							<input v-else-if="estadoId==producto.id" v-model="producto.nombre" type="text" style="width: 200px;">
+							<input class="form-control" v-else-if="estadoId==producto.id" 
+							v-model="producto.nombre" type="text" style="width: 200px;" 
+							@keypress="validarNombreEditar($event, producto ,'nombre', 20)">
 						</td>
 						<td>
 							<div v-if="estadoId!=producto.id">${producto.codigo}</div>
-							<input v-else-if="estadoId==producto.id" v-model="producto.codigo" type="number">
+							<input class="form-control" v-else-if="estadoId==producto.id"
+							 v-model="producto.codigo" type="text"
+							 @keypress="validarCodigoEditar($event, producto ,'codigo', 10)"
+							 >
 						</td>
 						<td>
 							<div v-if="estadoId!=producto.id">${producto.categoria}</div>
 							<select class="form-select" v-else-if="estadoId==producto.id" v-model="producto.categoria">
-								<option selected></option>
+								<option hidden selected></option>
 								<option value="Hogar">Hogar</option>
 								<option value="Electrodomesticos">Electrodomesticos</option>
 								<option value="Tecnologia">Tecnologia</option>
@@ -139,20 +144,24 @@ const crearProducto = "{{ path('crearProducto') }}";
 
 						<td>
 							<div v-if="estadoId!=producto.id">${producto.precio}</div>
-							<input v-else-if="estadoId==producto.id" v-model="producto.precio" type="number">
+							<input  class="form-control" v-else-if="estadoId==producto.id" 
+							v-model="producto.precio" type="text"
+							 @keypress="validarCantidadEditar($event, producto ,'precio', 15)">
 						</td>
 
 
 						<td>
 							<div v-if="estadoId!=producto.id">${producto.cantidad}</div>
-							<input v-else-if="estadoId==producto.id" v-model="producto.cantidad" min="0" :max="500" type="number">
+							<input class="form-control" v-else-if="estadoId==producto.id" 
+							v-model="producto.cantidad" type="text"
+							 @keypress="validarCantidadEditar($event, producto ,'cantidad', 10)">
 						</td>
 
 
 						<td  >
 							<div v-if="estadoId!=producto.id">${producto.estado}</div>
 							<select v-else-if="estadoId==producto.id" class="form-select" v-model="producto.estado">
-								<option selected></option>
+								<option hidden selected></option>
 								<option value="Activo">Activo</option>
 								<option value="Inactivo">Inactivo</option>
 							</select>

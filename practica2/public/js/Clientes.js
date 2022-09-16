@@ -143,7 +143,7 @@ new Vue({
     },
 
     validarNombre(e, index, lon) {
-      const regex = new RegExp(`^[a-zA-Z]{0,${lon}}$`, 'g');
+      const regex = new RegExp(`^[A-Za-z- \s]{0,${lon}}$`, 'g');
       this.rojitoClientes = false
 
       if(!regex.test(`${this.formClientes[index]}${e.key}`)) {

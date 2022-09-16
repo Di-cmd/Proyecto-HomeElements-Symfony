@@ -78,28 +78,28 @@ const crearProducto = "{{ path('crearProducto') }}";
 						<td></td>
 
 						<td>
-							<input required v-model="formClientes.nombre" @keypress="validarNombre($event, 'nombre', 20)" :class="{rojito: rojitoClientes}" class="form-control" type="text"/>
+							<input required v-model="formClientes.nombre" @keypress="validarNombre($event, 'nombre', 30)" :class="{rojito: rojitoClientes}" class="form-control" type="text"/>
 						</td>
 						<td><input required v-model="formClientes.correo" class="form-control" type="email" maxlength="53"/>
 
 						</td>
 						<td>
 							<select required class="form-select" v-model="formClientes.departamento">
-								<option selected></option>
+								<option hidden selected></option>
 								<option v-for="departamento in departamentos">
 									${departamento.nombre}</option>
 							</select>
 						</td>
 						<td>
 							<select required v-if="formClientes.departamento" class="form-select" v-model="formClientes.municipio">
-								<option selected></option>
+								<option hidden selected></option>
 								<option v-if="dane.departamento == formClientes.departamento" v-for="dane in dane">
 									${dane.municipio}</option>
 							</select>
 						</td>
 						<td>
 							<select class="form-select" v-model="formClientes.estado">
-								<option selected></option>
+								<option hidden selected></option>
 								<option value="Activo">Activo</option>
 								<option value="Inactivo">Inactivo</option>
 							</select>
@@ -131,7 +131,7 @@ const crearProducto = "{{ path('crearProducto') }}";
 						<td>
 							<div v-if="estadoId!=cliente.id">${cliente.departamento}</div>
 							<select class="form-select" v-else-if="estadoId==cliente.id" v-model="cliente.departamento" style="width:70% ;">
-								<option selected></option>
+								<option hidden selected></option>
 								<option v-for="departamento in departamentos">
 									${departamento.nombre}</option>
 							</select>
@@ -142,7 +142,7 @@ const crearProducto = "{{ path('crearProducto') }}";
 
 							<div v-if="estadoId!=cliente.id">${cliente.municipio}</div>
 							<select class="form-select" v-else-if="estadoId==cliente.id" v-model="cliente.municipio">
-								<option selected></option>
+								<option hidden selected></option>
 								<option v-if="dane.departamento == cliente.departamento" v-for="dane in dane">
 									${dane.municipio}</option>
 							</select>
@@ -152,7 +152,7 @@ const crearProducto = "{{ path('crearProducto') }}";
 						<td>
 							<div v-if="estadoId!=cliente.id">${cliente.estado}</div>
 							<select v-else-if="estadoId==cliente.id" class="form-select" v-model="cliente.estado">
-								<option selected></option>
+								<option hidden selected></option>
 								<option value="Activo">Activo</option>
 								<option value="Inactivo">Inactivo</option>
 							</select>

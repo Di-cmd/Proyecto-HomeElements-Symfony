@@ -37,11 +37,14 @@ new Vue({
     },
 
     async crearProducto() {
-      if (this.formProductos.nombre != "" && this.formProductos.codigo!= 0
-       && this.formProductos.cantidad != 0 && this.formProductos.precio!= 0 
-       && this.formProductos.categoria!="" && this.formProductos.estado !=""
-        ) {
-
+      if (
+        this.formProductos.nombre != "" &&
+        this.formProductos.codigo != 0 &&
+        this.formProductos.cantidad != 0 &&
+        this.formProductos.precio != 0 &&
+        this.formProductos.categoria != "" &&
+        this.formProductos.estado != ""
+      ) {
         let formulario = await fetch(crearProducto, {
           method: "POST",
           body: JSON.stringify(this.formProductos),
@@ -76,48 +79,106 @@ new Vue({
     },
 
     async editProduct(estado, idProducto, producto) {
-      console.log(producto);
-      this.estadoEditar = estado;
-      this.estadoId = idProducto;
-      this.producto = producto;
+      if (
+        producto.nombre != "" &&
+        producto.codigo != 0 &&
+        producto.cantidad != 0 &&
+        producto.precio != 0 &&
+        producto.categoria != "" &&
+        producto.estado != ""
+      ) {
+        console.log(producto);
+        this.estadoEditar = estado;
+        this.estadoId = idProducto;
+        this.producto = producto;
 
-      if (this.producto != 0) {
-        let editar = await axios.put(
-          "http://127.0.0.1:8080/editProducto",
-          this.producto
-        );
-        this.mensajeGuardado = editar.data.mensaje;
-        this.getProductos();
+        if (this.producto != 0) {
+          let editar = await axios.put(
+            "http://127.0.0.1:8080/editProducto",
+            this.producto
+          );
+          this.mensajeGuardado = editar.data.mensaje;
+          this.getProductos();
+        } else {
+          console.log("este es el producto", this.producto);
+          this.getProductos();
+        }
       } else {
-        console.log("este es el producto", this.producto);
-        this.getProductos();
+        alert("Por favor debe diligenciar todos los campos");
       }
     },
 
-
     validarNombre(e, index, lon) {
-      const regex = new RegExp(`^[a-zA-Z]{0,${lon}}$`, 'g');
-      this.rojitoClientes = false
+      const regex = new RegExp(`^[A-Za-z- \s]{0,${lon}}$`, "g");
+      this.rojitoClientes = false;
 
-      if(!regex.test(`${this.formProductos[index]}${e.key}`)) {
-        this.rojitoClientes = true
-        e.preventDefault()
-        return false
+      if (!regex.test(`${this.formProductos[index]}${e.key}`)) {
+        this.rojitoClientes = true;
+        e.preventDefault();
+        return false;
       }
-      return true
+      return true;
     },
 
     validarCodigo(e, index, lon) {
-      const regex = new RegExp(`^[A-Za-z0-9\s]{0,${lon}}$`, 'g');
-      this.rojitoClientes = false
-      if(!regex.test(`${this.formProductos[index]}${e.key}`)) {
-        this.rojitoClientes = true
-        e.preventDefault()
-        return false
+      const regex = new RegExp(`^[A-Za-z0-9\s]{0,${lon}}$`, "g");
+      this.rojitoClientes = false;
+      if (!regex.test(`${this.formProductos[index]}${e.key}`)) {
+        this.rojitoClientes = true;
+        e.preventDefault();
+        return false;
       }
-      return true
-    }
+      return true;
+    },
 
+    validarCantidad(e, index, lon) {
+      const regex = new RegExp(`^[0-9]{0,${lon}}$`, "g");
+      this.rojitoClientes = false;
+
+      if (!regex.test(`${this.formProductos[index]}${e.key}`)) {
+        this.rojitoClientes = true;
+        e.preventDefault();
+        return false;
+      }
+      return true;
+    },
+
+    // Validaciones del editar:
+
+    validarNombreEditar(e, producto, index, lon) {
+      const regex = new RegExp(`^[A-Za-z- \s]{0,${lon}}$`, "g");
+      this.rojitoClientes = false;
+
+      if (!regex.test(`${producto[index]}${e.key}`)) {
+        this.rojitoClientes = true;
+        e.preventDefault();
+        return false;
+      }
+      return true;
+    },
+
+    validarCodigoEditar(e, producto, index, lon) {
+      const regex = new RegExp(`^[A-Za-z0-9\s]{0,${lon}}$`, "g");
+      this.rojitoClientes = false;
+      if (!regex.test(`${producto[index]}${e.key}`)) {
+        this.rojitoClientes = true;
+        e.preventDefault();
+        return false;
+      }
+      return true;
+    },
+
+    validarCantidadEditar(e, producto, index, lon) {
+      const regex = new RegExp(`^[0-9]{0,${lon}}$`, "g");
+      this.rojitoClientes = false;
+
+      if (!regex.test(`${producto[index]}${e.key}`)) {
+        this.rojitoClientes = true;
+        e.preventDefault();
+        return false;
+      }
+      return true;
+    },
   },
   computed: {},
 });
