@@ -78,13 +78,17 @@ const crearProducto = "{{ path('crearProducto') }}";
 						<td></td>
 
 						<td>
-							<input required v-model="formClientes.nombre" @keypress="validarNombre($event, 'nombre', 30)" :class="{rojito: rojitoClientes}" class="form-control" type="text"/>
+							<input required v-model="formClientes.nombre" @keypress="validarNombre($event, 'nombre', 30)" :class="{rojito: rojitoClientes}" 
+							class="form-control" 
+							type="text"/>
 						</td>
-						<td><input required v-model="formClientes.correo" class="form-control" type="email" maxlength="53"/>
+						<td><input required v-model="formClientes.correo" @keypress="validarCorreo($event,'correo', 38)" 
+						class="form-control" 
+						type="email"/>
 
 						</td>
 						<td>
-							<select required class="form-select" v-model="formClientes.departamento">
+							<select  @change="cambioDepartamento" required class="form-select" v-model="formClientes.departamento">
 								<option hidden selected></option>
 								<option v-for="departamento in departamentos">
 									${departamento.nombre}</option>
@@ -110,8 +114,6 @@ const crearProducto = "{{ path('crearProducto') }}";
 							<button @click="crearCliente" class="btn btn-success">Crear</button>
 							<button @click="nuevoCliente(0)" class="btn btn-danger">Cancelar</button>
 						</td>
-
-
 					</tr>
 
 
@@ -121,16 +123,23 @@ const crearProducto = "{{ path('crearProducto') }}";
 						</td>
 						<td>
 							<div v-if="estadoId!=cliente.id">${cliente.nombre}</div>
-							<input v-else-if="estadoId==cliente.id" v-model="cliente.nombre" type="text">
+							<input v-else-if="estadoId==cliente.id" 
+							v-model="cliente.nombre" 
+							type="text"
+							@keypress="validarNombreEditar($event,cliente,'nombre', 30)"
+							class="form-control">
 						</td>
 						<td>
 							<div v-if="estadoId!=cliente.id">${cliente.correo}</div>
-							<input v-else-if="estadoId==cliente.id" v-model="cliente.correo" type="text">
+							<input v-else-if="estadoId==cliente.id" 
+							v-model="cliente.correo" 
+							type="email"
+							@keypress="validarCorreoEditar($event,cliente,'correo', 38)"
+							class="form-control">
 						</td>
-
 						<td>
 							<div v-if="estadoId!=cliente.id">${cliente.departamento}</div>
-							<select class="form-select" v-else-if="estadoId==cliente.id" v-model="cliente.departamento" style="width:70% ;">
+							<select  @change="cambioDepartamentoEditar(cliente)"  class="form-select" v-else-if="estadoId==cliente.id" v-model="cliente.departamento" style="width:70% ;">
 								<option hidden selected></option>
 								<option v-for="departamento in departamentos">
 									${departamento.nombre}</option>

@@ -119,7 +119,8 @@ class PedidoController extends AbstractController
 
     /**
      * @Route("/editarPedido", name="editarPedido")
-     */
+    */
+
     public function editarPedido(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
@@ -145,7 +146,7 @@ class PedidoController extends AbstractController
 
 
         /**
-     * @Route("/buscarProductos/{id}", name="editarPedido")
+     * @Route("/buscarProductos/{id}", name="buscarProductos")
      */
     public function buscarProductos($id,Request $request): Response
     {

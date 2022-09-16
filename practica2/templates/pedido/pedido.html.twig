@@ -32,8 +32,8 @@ endblock %}
 	<script defer src="{{asset('js/Pedidos.js')}}"></script>
 	<script>
 		const productoJSON = "{{ path('productoJSON') }}";
-const crearProducto = "{{ path('crearProducto') }}";
-let conse = 0;
+		const crearProducto = "{{ path('crearProducto') }}";
+		let conse = 0;
 	</script>
 
 	<div id="app">
@@ -94,8 +94,8 @@ let conse = 0;
 								<p>Municipio</p>
 							</div>
 							<div class="col-3">
-								<select required class="form-select" v-model="formPedidos.departamento">
-									<option selected></option>
+								<select @change="cambioDepartamento"  required class="form-select" v-model="formPedidos.departamento">
+									<option hidden selected></option>
 									<option v-for="departamento in departamentos">
 										${departamento.nombre}</option>
 								</select>
@@ -107,7 +107,7 @@ let conse = 0;
 							</div>
 							<div class="col-3">
 								<select required v-if="formPedidos.departamento" class="form-select" v-model="formPedidos.municipio">
-									<option selected></option>
+									<option hidden selected></option>
 									<option v-if="dane.departamento == formPedidos.departamento" v-for="dane in dane">
 										${dane.municipio}</option>
 								</select>
@@ -133,8 +133,8 @@ let conse = 0;
 									<tr>
 										<td>
 											<select required @change="precioProducto()" class="form-select" v-model="formPedidos.productoSeleccionado">
-												<option selected   value=""></option>
-												<option  v-for="producto in productos" :value="producto">
+												<option hidden selected   value=""></option>
+												<option  v-for="producto in productosSeleccionados" :value="producto">
 													${producto.nombre}
 												</option>
 											</select>
@@ -232,13 +232,19 @@ let conse = 0;
 							</td>
 							<td>
 								<div v-if="!pedido.editar">${pedido.codigo}</div>
-								<input v-else-if="pedido.editar" v-model="pedido.codigo" type="text">
+								<input v-else-if="pedido.editar" class="form-control" 
+								v-model="pedido.codigo" 
+								type="text"
+								@keypress="validarCodigo($event,'pedido','codigo', 20)">
 							</td>
 							<td style="width: 30%;">
 
 								<div v-if="!pedido.editar">${pedido.departamento}</div>
-								<select class="form-select" v-else-if="pedido.editar" v-model="pedido.departamento" type="text" style="width:50% ;">
-									<option selected></option>
+								<select @change="cambioDepartamentoEditar(pedido)" class="form-select" v-else-if="pedido.editar"
+								 v-model="pedido.departamento" type="text" 
+								 style="width:50% ;">
+
+									<option hidden selected></option>
 									<option v-for="departamento in departamentos">
 										${departamento.nombre}</option>
 								</select>
@@ -247,13 +253,11 @@ let conse = 0;
 
 								<div v-if="!pedido.editar">${pedido.municipio}</div>
 								<select class="form-select" v-else-if="pedido.editar" v-model="pedido.municipio" style="width:50% ;">
-									<option selected></option>
+									<option hidden selected></option>
 									<option v-if="dane.departamento == pedido.departamento" v-for="dane in dane">
 										${dane.municipio}</option>
 								</select>
 							</td>
-
-
 							<td>
 								<button @click="modalProductos(pedido)" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalMostrarProductos">
 									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewbox="0 0 16 16">
@@ -261,15 +265,12 @@ let conse = 0;
 									</svg>
 								</button>
 							</td>
-
 							<td>
 
 								<div>
 									$ ${pedido.totalPedido} pesos
 								</div>
 							</td>
-
-
 							<td>
 								{# <button v-if="estadoId!=pedido.id" type="button" @click="editPedido(1,pedido.id,0)" class="btn btn-warning">Editar</button>																																																																																																																																																																		<button v-if="estadoId==pedido.id" @click="editPedido(0,0,pedido)" class="btn btn-success">Guardar</button>																																																																																																<button v-if="estadoId==pedido.id" @click="editPedido(0,0,0)" class="btn btn-danger">Cancelar</button> #}
 

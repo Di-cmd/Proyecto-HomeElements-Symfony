@@ -84,34 +84,35 @@ new Vue({
     },
 
     async crearPedido() {
-    if (this.formPedidos.codigo != "" && this.formPedidos.departamento!= ""
-      && this.formPedidos.municipio != "" && this.formPedidos.productoAgregado.length>0  ) {
+      if (
+        this.formPedidos.codigo != "" &&
+        this.formPedidos.departamento != "" &&
+        this.formPedidos.municipio != "" &&
+        this.formPedidos.productoAgregado.length > 0
+      ) {
+        this.formPedidos.totalPedido = this.formPedidos.productoAgregado.reduce(
+          (prev, curr) => prev + curr.precioTotal,
+          0
+        );
 
-      this.formPedidos.totalPedido = this.formPedidos.productoAgregado.reduce(
-        (prev, curr) => prev + curr.precioTotal,
-        0
-      );
+        let crearPedido = await axios.post(
+          "http://127.0.0.1:8080/crearPedido",
+          this.formPedidos
+        );
+        this.mensajeGuardado = crearPedido.data.mensaje;
+        this.getPedidos();
 
-      let crearPedido = await axios.post(
-        "http://127.0.0.1:8080/crearPedido",
-        this.formPedidos
-      );
-      this.mensajeGuardado = crearPedido.data.mensaje;
-      this.getPedidos();
-
-      //Limpiar el formulario
-      this.formPedidos.codigo = "";
-      this.formPedidos.departamento = "";
-      this.formPedidos.municipio = "";
-      this.formPedidos.productoSeleccionado = "";
-      this.formPedidos.cantidadProducto = 0;
-      this.formPedidos.totalPedido = 0;
-      this.formPedidos.productoAgregado = [];
-
-    } else {
-      alert("Por favor debe diligenciar todos los campos");
-    }
-
+        //Limpiar el formulario
+        this.formPedidos.codigo = "";
+        this.formPedidos.departamento = "";
+        this.formPedidos.municipio = "";
+        this.formPedidos.productoSeleccionado = "";
+        this.formPedidos.cantidadProducto = 0;
+        this.formPedidos.totalPedido = 0;
+        this.formPedidos.productoAgregado = [];
+      } else {
+        alert("Por favor debe diligenciar todos los campos");
+      }
     },
 
     async getClientes() {
@@ -129,12 +130,20 @@ new Vue({
     },
 
     async guardarEdicion(pedido) {
-      let editar = await axios.post(
-        "http://127.0.0.1:8080/editarPedido",
-        pedido
-      );
-      this.mensajeGuardado = editar.data.mensaje;
-      this.getPedidos();
+      if (
+        pedido.codigo != "" &&
+        pedido.departamento != "" &&
+        pedido.municipio != ""
+      ) {
+        let editar = await axios.post(
+          "http://127.0.0.1:8080/editarPedido",
+          pedido
+        );
+        this.mensajeGuardado = editar.data.mensaje;
+        this.getPedidos();
+      } else {
+        alert("Por favor debe diligenciar todos los campos");
+      }
     },
 
     // async editPedido(estado, idPedido, pedido) {
@@ -173,31 +182,43 @@ new Vue({
 
     async agregarProducto(nombreProducto) {
 
-      if ( this.formPedidos.productoSeleccionado.nombre !="" && this.formPedidos.cantidadProducto > 0) {
-      let Pagregado = {
-        idProducto: this.formPedidos.productoSeleccionado.id,
-        nombreProducto: this.formPedidos.productoSeleccionado.nombre,
-        cantidadProducto: this.formPedidos.cantidadProducto,
-        precioProducto: this.precioUnitario,
-        precioTotal: this.precioTotalProductos,
-      };
 
-      //Guardo los Productos y agrego los productos a una variable reactiva
-      this.formPedidos.productoAgregado.push(Pagregado);
-      this.productosAgregados.push(Pagregado);
+      // console.log(this.productosAgregados.map(agregado=>{
+      //   if(agregado.nombre==nombreProducto.nombre){
+      //      return{
+      //       ...agregado,
+      //       existe: true
+      //     }
+      //   }
+      // }));
 
-      //Se limpia el formulario:
-      this.formPedidos.productoSeleccionado = "";
-      this.formPedidos.cantidadProducto = 0;
-      this.precioUnitario = 0;
-      this.precioTotalProductos = 0;
-    }
 
-    else {
-      alert("Por favor debe diligenciar todos los campos");
-    }
 
-  },
+      if (
+        this.formPedidos.productoSeleccionado.nombre != "" &&
+        this.formPedidos.cantidadProducto > 0
+      ) {
+        let Pagregado = {
+          idProducto: this.formPedidos.productoSeleccionado.id,
+          nombreProducto: this.formPedidos.productoSeleccionado.nombre,
+          cantidadProducto: this.formPedidos.cantidadProducto,
+          precioProducto: this.precioUnitario,
+          precioTotal: this.precioTotalProductos,
+        };
+
+        //Guardo los Productos y agrego los productos a una variable reactiva
+        this.formPedidos.productoAgregado.push(Pagregado);
+        this.productosAgregados.push(Pagregado);
+
+        //Se limpia el formulario:
+        this.formPedidos.productoSeleccionado = "";
+        this.formPedidos.cantidadProducto = 0;
+        this.precioUnitario = 0;
+        this.precioTotalProductos = 0;
+      } else {
+        alert("Por favor debe diligenciar todos los campos");
+      }
+    },
 
     async eliminarProducto(producto) {
       this.formPedidos.productoAgregado.splice(producto.id, 1);
@@ -222,35 +243,60 @@ new Vue({
       this.productosAgregados = this.mensajeGuardado;
     },
 
-
-
     validarNombre(e, index, lon) {
-      const regex = new RegExp(`^[a-zA-Z]{0,${lon}}$`, 'g');
-      this.rojitoClientes = false
+      const regex = new RegExp(`^[a-zA-Z]{0,${lon}}$`, "g");
+      this.rojitoClientes = false;
 
-      if(!regex.test(`${this.formPedidos[index]}${e.key}`)) {
-        this.rojitoClientes = true
-        e.preventDefault()
-        return false
+      if (!regex.test(`${this.formPedidos[index]}${e.key}`)) {
+        this.rojitoClientes = true;
+        e.preventDefault();
+        return false;
       }
-      
-      return true
+
+      return true;
+    },
+
+    validarCodigo(e, index, lon) {
+      const regex = new RegExp(`^[A-Za-z0-9\s]{0,${lon}}$`, "g");
+      this.rojitoClientes = false;
+      if (!regex.test(`${this.formPedidos[index]}${e.key}`)) {
+        this.rojitoClientes = true;
+        e.preventDefault();
+        return false;
+      }
+
+      return true;
     },
 
 
-    validarCodigo(e, index, lon) {
-      const regex = new RegExp(`^[A-Za-z0-9\s]{0,${lon}}$`, 'g');
-      this.rojitoClientes = false
-      if(!regex.test(`${this.formPedidos[index]}${e.key}`)) {
-        this.rojitoClientes = true
-        e.preventDefault()
-        return false
+    validarCodigoEditar(e, pedido,index, lon) {
+      const regex = new RegExp(`^[A-Za-z0-9\s]{0,${lon}}$`, "g");
+      this.rojitoClientes = false;
+      if (!regex.test(`${pedido[index]}${e.key}`)) {
+        this.rojitoClientes = true;
+        e.preventDefault();
+        return false;
       }
-      
-      return true
-    }
+
+      return true;
+    },
 
 
+    cambioDepartamentoEditar(cliente) {
+      cliente.municipio = "";
+    },
+
+    cambioDepartamento() {
+      this.formPedidos.municipio = "";
+    },
+
+
+    NoAgregados() {
+
+       // Modificando con map
+   
+     
+    },
     
   },
 
@@ -263,15 +309,17 @@ new Vue({
       }, 0);
     },
 
-    NoAgregados() {
-      console.log(this.productosAgregados);
-      // Modificando con map
+    productosSeleccionados() {
+      return this.productos.filter(producto => {
+        let agregado = this.formPedidos.productoAgregado.filter(agregado => producto.nombre == agregado.nombreProducto)
+
+        if(agregado.length == 0) {
+          return true
+        }
+        return false
+      })
     },
 
 
   },
-
-
-
-
 });
