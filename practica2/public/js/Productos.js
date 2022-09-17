@@ -87,7 +87,6 @@ new Vue({
         producto.categoria != "" &&
         producto.estado != ""
       ) {
-        console.log(producto);
         this.estadoEditar = estado;
         this.estadoId = idProducto;
         this.producto = producto;
@@ -100,7 +99,6 @@ new Vue({
           this.mensajeGuardado = editar.data.mensaje;
           this.getProductos();
         } else {
-          console.log("este es el producto", this.producto);
           this.getProductos();
         }
       } else {

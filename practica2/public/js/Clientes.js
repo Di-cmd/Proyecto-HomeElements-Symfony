@@ -148,7 +148,6 @@ new Vue({
         "http://127.0.0.1:8080/pedidoJSON/" + this.dataModal.cliente.id
       );
       this.dataModal.pedido = pedidos.data.pedidos;
-      console.log(this.dataModal.pedido);
     },
 
     validarNombre(e, index, lon) {
@@ -207,6 +206,37 @@ new Vue({
     cambioDepartamento() {
       this.formClientes.municipio = "";
     },
+  
+
+    plantilla() {
+      pedidoPorCliente=[];
+      pedidoPorCliente=this.dataModal.pedido.map(pedido=>{
+        return{
+          ...pedido,
+          cliente:this.dataModal.cliente.nombre,
+          correoCliente:this.dataModal.cliente.correo,
+        }
+      })
+
+
+      let plantilla = XLSX.utils.book_new();
+      let contenido = pedidoPorCliente.map;
+      plantilla.SheetNames.push("Plantilla");
+      const info = [["ID","Codigo", "Departamento", "Municipio", "Total Pedido","Cliente","Correo Electronico"]];
+
+      for (index in pedidoPorCliente) {
+        aux = []
+        for (propiedad in pedidoPorCliente[index]) {
+            aux.push(pedidoPorCliente[index][propiedad])
+        }
+        info.push(aux)
+    }
+      const hoja = XLSX.utils.aoa_to_sheet(info);
+      plantilla.Sheets["Plantilla"] = hoja;
+      return XLSX.writeFile(plantilla, "PlantillaPedidos.xlsx");
+    },
+
+
 
 
   },

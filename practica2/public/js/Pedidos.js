@@ -169,7 +169,6 @@ new Vue({
 
     //Para el metodo eliminar Tengo que mandar el parametro, por medio de la ruta
     async deletePedido(id) {
-      console.log(id);
       let eliminar = await axios.post(
         "http://127.0.0.1:8080/deletePedido/" + id
       );
@@ -181,8 +180,6 @@ new Vue({
     },
 
     async agregarProducto(nombreProducto) {
-
-
       // console.log(this.productosAgregados.map(agregado=>{
       //   if(agregado.nombre==nombreProducto.nombre){
       //      return{
@@ -191,8 +188,6 @@ new Vue({
       //     }
       //   }
       // }));
-
-
 
       if (
         this.formPedidos.productoSeleccionado.nombre != "" &&
@@ -222,7 +217,6 @@ new Vue({
 
     async eliminarProducto(producto) {
       this.formPedidos.productoAgregado.splice(producto.id, 1);
-      console.log(this.formPedidos.productoAgregado);
     },
 
     async precioProducto() {
@@ -233,9 +227,6 @@ new Vue({
 
     async modalProductos(pedido) {
       this.pedidoModal = pedido;
-
-      console.log(this.pedidoModal);
-
       let pedidos = await axios(
         "http://127.0.0.1:8080/buscarProductos/" + pedido.id
       );
@@ -268,8 +259,7 @@ new Vue({
       return true;
     },
 
-
-    validarCodigoEditar(e, pedido,index, lon) {
+    validarCodigoEditar(e, pedido, index, lon) {
       const regex = new RegExp(`^[A-Za-z0-9\s]{0,${lon}}$`, "g");
       this.rojitoClientes = false;
       if (!regex.test(`${pedido[index]}${e.key}`)) {
@@ -281,6 +271,20 @@ new Vue({
       return true;
     },
 
+    validarCantidad(e, index) {
+      const regex = new RegExp(
+        `^[0-9]{0,${this.formPedidos.productoSeleccionado.cantidad}}$`,
+        "g"
+      );
+      this.rojitoClientes = false;
+
+      if (!regex.test(`${this.formPedidos[index]}${e.key}`)) {
+        this.rojitoClientes = true;
+        e.preventDefault();
+        return false;
+      }
+      return true;
+    },
 
     cambioDepartamentoEditar(cliente) {
       cliente.municipio = "";
@@ -290,15 +294,43 @@ new Vue({
       this.formPedidos.municipio = "";
     },
 
+    plantilla() {
 
-    NoAgregados() {
-
-       // Modificando con map
-   
-     
-    },
+      productosPorPedido=this.pedidoModal;
+      productosPorPedido=this.productosAgregados.map(producto=>{
+        return{
+          ...producto,
+          cliente:this.clienteEscogido.nombre,
+          codigoPedido:this.pedidoModal.codigo,
+          departamento:this.pedidoModal.departamento,
+          municipio:this.pedidoModal.municipio,
+        }
+      })
+      let plantilla = XLSX.utils.book_new();
+      plantilla.SheetNames.push("Plantilla");
+      const info = [
+        ['Codigo del Prodcuto', 'Nombre del Producto', 'precio por Unidad', 'Cantidad del producto', 'precio Total', 'Cliente', 'Codigo del Pedido', 'Departamento','Municipio']
+    ]
+      for (index in productosPorPedido) {
+        aux = []
+        for (propiedad in productosPorPedido[index]) {
+            aux.push(productosPorPedido[index][propiedad])
+        }
+        info.push(aux)
+    }
+      const hoja = XLSX.utils.aoa_to_sheet(info);
+      plantilla.Sheets["Plantilla"] = hoja;
+      return XLSX.writeFile(plantilla, "PlantillaPedidos.xlsx");
     
+    
+    },
+
+
+
   },
+
+
+
 
   computed: {
     // this.formPedidos.totalPedido =this.formPedidos.totalPedido + Pagregado.precioTotal;
@@ -310,16 +342,16 @@ new Vue({
     },
 
     productosSeleccionados() {
-      return this.productos.filter(producto => {
-        let agregado = this.formPedidos.productoAgregado.filter(agregado => producto.nombre == agregado.nombreProducto)
+      return this.productos.filter((producto) => {
+        let agregado = this.formPedidos.productoAgregado.filter(
+          (agregado) => producto.nombre == agregado.nombreProducto
+        );
 
-        if(agregado.length == 0) {
-          return true
+        if (agregado.length == 0) {
+          return true;
         }
-        return false
-      })
+        return false;
+      });
     },
-
-
   },
 });
