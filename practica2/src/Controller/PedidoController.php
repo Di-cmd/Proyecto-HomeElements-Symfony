@@ -141,11 +141,7 @@ class PedidoController extends AbstractController
     }
 
 
-
-
-
-
-        /**
+    /**
      * @Route("/buscarProductos/{id}", name="buscarProductos")
      */
     public function buscarProductos($id,Request $request): Response
@@ -156,6 +152,33 @@ class PedidoController extends AbstractController
 
 
 
+
+   /**
+     * @Route("/enviarCorreo", name="enviarCorreo")
+     */
+    public function enviarCorreo(Request $request): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        // dd("esto es lo que llega al controlador",$data);
+
+        $email='ingeniero.desarrollo8@comersantander.com';
+        $asunto='Prueba envio';
+        $msg='Hola, se envia un mensaje desde php';
+        $headers =  'MIME-Version: 1.0' . "\r\n"; 
+        $headers .= 'From: Your name <info@address.com>' . "\r\n";
+        $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n"; 
+
+        ini_set("SMTP","localhost");
+        ini_set("smtp_port","25");
+        ini_set("sendmail_from","00000@gmail.com");
+        ini_set("sendmail_path", "C:\wamp\bin\sendmail.exe -t");
+
+
+        
+        mail($email,$asunto,$msg,$headers,"From: me@you.com");
+
+        return new JsonResponse(['mensaje' => 'Se envio el correo con exito']);
+    }
 
 
 

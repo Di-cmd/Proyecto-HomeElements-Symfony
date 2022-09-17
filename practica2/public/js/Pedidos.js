@@ -179,16 +179,7 @@ new Vue({
       this.getPedidos();
     },
 
-    async agregarProducto(nombreProducto) {
-      // console.log(this.productosAgregados.map(agregado=>{
-      //   if(agregado.nombre==nombreProducto.nombre){
-      //      return{
-      //       ...agregado,
-      //       existe: true
-      //     }
-      //   }
-      // }));
-
+    async agregarProducto() {
       if (
         this.formPedidos.productoSeleccionado.nombre != "" &&
         this.formPedidos.cantidadProducto > 0
@@ -295,42 +286,60 @@ new Vue({
     },
 
     plantilla() {
-
-      productosPorPedido=this.pedidoModal;
-      productosPorPedido=this.productosAgregados.map(producto=>{
-        return{
+      productosPorPedido = this.pedidoModal;
+      productosPorPedido = this.productosAgregados.map((producto) => {
+        return {
           ...producto,
-          cliente:this.clienteEscogido.nombre,
-          codigoPedido:this.pedidoModal.codigo,
-          departamento:this.pedidoModal.departamento,
-          municipio:this.pedidoModal.municipio,
-        }
-      })
+          cliente: this.clienteEscogido.nombre,
+          codigoPedido: this.pedidoModal.codigo,
+          departamento: this.pedidoModal.departamento,
+          municipio: this.pedidoModal.municipio,
+        };
+      });
       let plantilla = XLSX.utils.book_new();
       plantilla.SheetNames.push("Plantilla");
       const info = [
-        ['Codigo del Prodcuto', 'Nombre del Producto', 'precio por Unidad', 'Cantidad del producto', 'precio Total', 'Cliente', 'Codigo del Pedido', 'Departamento','Municipio']
-    ]
+        [
+          "Codigo del Prodcuto",
+          "Nombre del Producto",
+          "precio por Unidad",
+          "Cantidad del producto",
+          "precio Total",
+          "Cliente",
+          "Codigo del Pedido",
+          "Departamento",
+          "Municipio",
+        ],
+      ];
       for (index in productosPorPedido) {
-        aux = []
+        aux = [];
         for (propiedad in productosPorPedido[index]) {
-            aux.push(productosPorPedido[index][propiedad])
+          aux.push(productosPorPedido[index][propiedad]);
         }
-        info.push(aux)
-    }
+        info.push(aux);
+      }
       const hoja = XLSX.utils.aoa_to_sheet(info);
       plantilla.Sheets["Plantilla"] = hoja;
       return XLSX.writeFile(plantilla, "PlantillaPedidos.xlsx");
-    
-    
     },
 
-
-
+    async enviarCorreo() {
+      let datosCorreo = this.productosAgregados.map((producto) => {
+        return {
+          ...producto,
+          correoCliente: this.clienteEscogido.correo,
+          cliente: this.clienteEscogido.nombre,
+          codigoPedido: this.pedidoModal.codigo,
+          departamento: this.pedidoModal.departamento,
+          municipio: this.pedidoModal.municipio,
+        };
+      });
+      let correo = await axios("http://127.0.0.1:8080/enviarCorreo",  datosCorreo);
+      this.mensajeGuardado = correo.data.mensaje;
+      console.log(this.mensajeGuardado);
+   
+    },
   },
-
-
-
 
   computed: {
     // this.formPedidos.totalPedido =this.formPedidos.totalPedido + Pagregado.precioTotal;
