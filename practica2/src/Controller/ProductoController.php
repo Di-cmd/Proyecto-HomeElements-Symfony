@@ -92,7 +92,7 @@ class ProductoController extends AbstractController
             $entityManager->persist($categoria);
             $entityManager->flush();
         }
-
+  
         $producto = new Producto();
         $producto->setNombre($data['nombre']);
         $producto->setCodigo($data['codigo']);

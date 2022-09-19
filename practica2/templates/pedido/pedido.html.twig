@@ -85,12 +85,12 @@ let conse = 0;
 								<p>Codigo del pedido</p>
 							</div>
 							<div class="col-3">
-								<input required v-model="formPedidos.codigo" class="form-control" type="text" @keypress="validarCodigo($event, 'codigo', 20)"/>
+								<input required v-model="formPedidos.codigo" class="form-control" type="text" @paste.prevent="" @keypress="validarCodigo($event, 'codigo', 20)"/>
 							</div>
 
 
 							<div class="col-3">
-								<p>Municipio</p>
+								<p>Departamento</p>
 							</div>
 							<div class="col-3">
 								<select @change="cambioDepartamento" required class="form-select" v-model="formPedidos.departamento">
@@ -102,7 +102,7 @@ let conse = 0;
 
 
 							<div class="col-3">
-								<p>Departamento</p>
+								<p>Municipio</p>
 							</div>
 							<div class="col-3">
 								<select required v-if="formPedidos.departamento" class="form-select" v-model="formPedidos.municipio">
@@ -131,7 +131,7 @@ let conse = 0;
 								<tbody>
 									<tr>
 										<td>
-											<select required @change="precioProducto()" class="form-select" v-model="formPedidos.productoSeleccionado">
+											<select required @change="precioProducto(); reinciarValores()" class="form-select" v-model="formPedidos.productoSeleccionado">
 												<option hidden selected value=""></option>
 												<option v-for="producto in productosSeleccionados" :value="producto">
 													${producto.nombre}
@@ -139,13 +139,14 @@ let conse = 0;
 											</select>
 										</td>
 										<td>
-											<input required @change="precioProducto()" class="form-control" v-model="formPedidos.cantidadProducto" type="number" @keypress="validarCodigo($event, 'codigo', 20)" min="0" :max="formPedidos.productoSeleccionado.cantidad"/>
+											<input required @keyup="precioProducto()" class="form-control" v-model="formPedidos.cantidadProducto" type="text" @paste.prevent="" @keypress="validarCantidad($event, 'cantidadProducto', 9)"/>
 										</td>
 										<td>
-											${precioUnitario}
+										${formatoNumeroPrecioProducto(precioUnitario)}
+										
 										</td>
 										<td>
-											${precioTotalProductos}
+										${formatoNumeroPrecioProducto(precioTotalProductos)} 
 										</td>
 										<td>
 											<button @click="agregarProducto(formPedidos.productoSeleccionado)" class="btn btn-dark">Agregar Producto</button>
@@ -164,12 +165,12 @@ let conse = 0;
 										</td>
 
 										<td>
-											$ ${producto.precioProducto}
+										${formatoNumeroPrecioProducto(producto.precioProducto)} 
 										</td>
 
 
 										<td>
-											$ ${producto.precioTotal}
+										${formatoNumeroPrecioProducto(producto.precioTotal)} 
 										</td>
 
 										<td>
@@ -185,7 +186,7 @@ let conse = 0;
 										</td>
 										<td colspan="2">
 											<strong>
-												${totalPedido}
+											 ${formatoNumeroPrecioProducto(totalPedido)} 
 											</strong>
 										</td>
 									</tr>
@@ -231,12 +232,12 @@ let conse = 0;
 							</td>
 							<td>
 								<div v-if="!pedido.editar">${pedido.codigo}</div>
-								<input v-else-if="pedido.editar" class="form-control" v-model="pedido.codigo" type="text" @keypress="validarCodigo($event,'pedido','codigo', 20)">
+								<input v-else-if="pedido.editar" class="form-control" v-model="pedido.codigo" type="text" @paste.prevent="" @keypress="validarCodigo($event,'pedido','codigo', 20)">
 							</td>
-							<td style="width: 30%;">
+							<td >
 
 								<div v-if="!pedido.editar">${pedido.departamento}</div>
-								<select @change="cambioDepartamentoEditar(pedido)" class="form-select" v-else-if="pedido.editar" v-model="pedido.departamento" type="text" style="width:50% ;">
+								<select @change="cambioDepartamentoEditar(pedido)" class="form-select" v-else-if="pedido.editar" v-model="pedido.departamento" type="text" >
 
 									<option hidden selected></option>
 									<option v-for="departamento in departamentos">
@@ -246,7 +247,7 @@ let conse = 0;
 							<td>
 
 								<div v-if="!pedido.editar">${pedido.municipio}</div>
-								<select class="form-select" v-else-if="pedido.editar" v-model="pedido.municipio" style="width:50% ;">
+								<select class="form-select" v-else-if="pedido.editar" v-model="pedido.municipio" >
 									<option hidden selected></option>
 									<option v-if="dane.departamento == pedido.departamento" v-for="dane in dane">
 										${dane.municipio}</option>
@@ -262,7 +263,7 @@ let conse = 0;
 							<td>
 
 								<div>
-									$ ${pedido.totalPedido} pesos
+									 ${formatoNumeroPrecioProducto(pedido.totalPedido)} 
 								</div>
 							</td>
 							<td>
@@ -281,6 +282,7 @@ let conse = 0;
 			<br>
 			<br>
 		</div>
+
 
 
 		<!-- Modal de crear un producto-->

@@ -40,7 +40,7 @@ endblock %}
 
 	<script>
 		const productoJSON = "{{ path('productoJSON') }}";
-const crearProducto = "{{ path('crearProducto') }}";
+		const crearProducto = "{{ path('crearProducto') }}";
 	</script>
 
 	<div id="app">
@@ -52,7 +52,6 @@ const crearProducto = "{{ path('crearProducto') }}";
 			<div>
 				<button @click="nuevoProducto(1)" class="btn btn-success">Crear Producto</button>
 			</div>
-
 
 			<br>
 			<br>
@@ -80,10 +79,11 @@ const crearProducto = "{{ path('crearProducto') }}";
 							<input class="form-control"
 							 v-model="formProductos.nombre" 
 							 type="text" 
+							 @paste.prevent=""
 							 @keypress="validarNombre($event, 'nombre', 20)" />
 						</td>
 						<td>
-							<input class="form-control" @keypress="validarCodigo($event, 'codigo', 20)" v-model="formProductos.codigo" type="text"/>
+							<input class="form-control" @paste.prevent="" @keypress="validarCodigo($event, 'codigo', 20)" v-model="formProductos.codigo" type="text"/>
 						</td>
 
 						<td>
@@ -96,12 +96,12 @@ const crearProducto = "{{ path('crearProducto') }}";
 							</select>
 						</td>
 
-						<td><input class="form-control" v-model="formProductos.precio"  @keypress="validarCantidad($event, 'precio', 15)" type="text"/></td>
+						<td><input class="form-control" v-model="formProductos.precio" @paste.prevent="" @keypress="validarCantidad($event, 'precio', 15)" type="text"/></td>
 
-						<td><input class="form-control" v-model="formProductos.cantidad" @keypress="validarCantidad($event, 'cantidad', 10)" type="text"/></td>
+						<td><input class="form-control" v-model="formProductos.cantidad" @paste.prevent="" @keypress="validarCantidad($event, 'cantidad', 10)" type="text"/></td>
 
 						<td>
-							<select class="form-select" v-model="formProductos.estado">
+							<select class="form-select" v-model="formProductos.estado" @paste.prevent="">
 								<option hidden selected></option>
 								<option value="Activo">Activo</option>
 								<option value="Inactivo">Inactivo</option>
@@ -122,12 +122,14 @@ const crearProducto = "{{ path('crearProducto') }}";
 							<div v-if="estadoId!=producto.id">${producto.nombre}</div>
 							<input class="form-control" v-else-if="estadoId==producto.id" 
 							v-model="producto.nombre" type="text" style="width: 200px;" 
+							@paste.prevent="" 
 							@keypress="validarNombreEditar($event, producto ,'nombre', 20)">
 						</td>
 						<td>
 							<div v-if="estadoId!=producto.id">${producto.codigo}</div>
 							<input class="form-control" v-else-if="estadoId==producto.id"
 							 v-model="producto.codigo" type="text"
+							 @paste.prevent=""
 							 @keypress="validarCodigoEditar($event, producto ,'codigo', 10)"
 							 >
 						</td>
@@ -143,9 +145,10 @@ const crearProducto = "{{ path('crearProducto') }}";
 						</td>
 
 						<td>
-							<div v-if="estadoId!=producto.id">${producto.precio}</div>
+							<div v-if="estadoId!=producto.id"> ${formatoNumeroPrecioProducto(producto.precio)}</div>
 							<input  class="form-control" v-else-if="estadoId==producto.id" 
 							v-model="producto.precio" type="text"
+							@paste.prevent=""
 							 @keypress="validarCantidadEditar($event, producto ,'precio', 15)">
 						</td>
 
@@ -154,13 +157,14 @@ const crearProducto = "{{ path('crearProducto') }}";
 							<div v-if="estadoId!=producto.id">${producto.cantidad}</div>
 							<input class="form-control" v-else-if="estadoId==producto.id" 
 							v-model="producto.cantidad" type="text"
+							@paste.prevent=""
 							 @keypress="validarCantidadEditar($event, producto ,'cantidad', 10)">
 						</td>
 
 
 						<td  >
 							<div v-if="estadoId!=producto.id">${producto.estado}</div>
-							<select v-else-if="estadoId==producto.id" class="form-select" v-model="producto.estado">
+							<select @paste.prevent="" v-else-if="estadoId==producto.id" class="form-select" v-model="producto.estado">
 								<option hidden selected></option>
 								<option value="Activo">Activo</option>
 								<option value="Inactivo">Inactivo</option>

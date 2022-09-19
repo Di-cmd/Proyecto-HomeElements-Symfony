@@ -35,6 +35,11 @@ new Vue({
   methods: {
     async nuevoCliente(id) {
       this.nuevoC = id;
+      this.formClientes.nombre = "";
+      this.formClientes.correo = "";
+      this.formClientes.departamento = "";
+      this.formClientes.municipio = "";
+      this.formClientes.estado = "";
     },
 
     async getClientes() {
@@ -124,6 +129,11 @@ new Vue({
           this.getClientes();
         } else {
           this.getClientes();
+          cliente.nombre = "";
+          cliente.municipio = "";
+          cliente.correo = "";
+          cliente.departamento = "";
+          cliente.estado = "";
         }
       } else {
         alert("Por favor debe diligenciar todos los campos");
@@ -206,39 +216,43 @@ new Vue({
     cambioDepartamento() {
       this.formClientes.municipio = "";
     },
-  
 
     plantilla() {
-      pedidoPorCliente=[];
-      pedidoPorCliente=this.dataModal.pedido.map(pedido=>{
-        return{
+      pedidoPorCliente = [];
+      pedidoPorCliente = this.dataModal.pedido.map((pedido) => {
+        return {
           ...pedido,
-          cliente:this.dataModal.cliente.nombre,
-          correoCliente:this.dataModal.cliente.correo,
-        }
-      })
-
+          cliente: this.dataModal.cliente.nombre,
+          correoCliente: this.dataModal.cliente.correo,
+        };
+      });
 
       let plantilla = XLSX.utils.book_new();
       let contenido = pedidoPorCliente.map;
       plantilla.SheetNames.push("Plantilla");
-      const info = [["ID","Codigo", "Departamento", "Municipio", "Total Pedido","Cliente","Correo Electronico"]];
+      const info = [
+        [
+          "ID",
+          "Codigo",
+          "Departamento",
+          "Municipio",
+          "Total Pedido",
+          "Cliente",
+          "Correo Electronico",
+        ],
+      ];
 
       for (index in pedidoPorCliente) {
-        aux = []
+        aux = [];
         for (propiedad in pedidoPorCliente[index]) {
-            aux.push(pedidoPorCliente[index][propiedad])
+          aux.push(pedidoPorCliente[index][propiedad]);
         }
-        info.push(aux)
-    }
+        info.push(aux);
+      }
       const hoja = XLSX.utils.aoa_to_sheet(info);
       plantilla.Sheets["Plantilla"] = hoja;
       return XLSX.writeFile(plantilla, "PlantillaPedidos.xlsx");
     },
-
-
-
-
   },
 
   computed: {},

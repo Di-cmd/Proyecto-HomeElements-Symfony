@@ -32,7 +32,7 @@ new Vue({
     existeProducto: false,
   },
   mounted() {
-    this.getClientes(), this.getDepartamentos(), this.getProductos();
+    this.getClientes(), this.getDepartamentos(), this.getProductos() ;
   },
 
   methods: {
@@ -49,6 +49,17 @@ new Vue({
     },
 
     async getPedidos() {
+
+      this.precioUnitario = 0;
+      this.precioTotalProductos=0;
+      this.formPedidos.cantidadProducto = 0;
+      this.formPedidos.productoAgregado = [];
+      this.formPedidos.departamento="";
+      this.formPedidos.municipio="";
+      this.formPedidos.codigo="";
+
+
+
       let pedidos = await axios.post(
         "http://127.0.0.1:8080/pedidoJSON/" + this.formPedidos["cliente"]
       );
@@ -211,9 +222,17 @@ new Vue({
     },
 
     async precioProducto() {
-      this.precioUnitario = this.formPedidos.productoSeleccionado.precio;
-      this.precioTotalProductos =
-        this.precioUnitario * this.formPedidos.cantidadProducto;
+  
+        this.precioUnitario = this.formPedidos.productoSeleccionado.precio;
+        this.precioTotalProductos =this.precioUnitario * this.formPedidos.cantidadProducto;
+   
+    },
+
+
+    reinciarValores() {
+      this.precioUnitario = 0;
+      this.precioTotalProductos=0;
+      this.formPedidos.cantidadProducto = 0;
     },
 
     async modalProductos(pedido) {
@@ -259,16 +278,22 @@ new Vue({
         return false;
       }
 
-      return true;
+      return true
     },
 
-    validarCantidad(e, index) {
-      const regex = new RegExp(
-        `^[0-9]{0,${this.formPedidos.productoSeleccionado.cantidad}}$`,
-        "g"
-      );
+    validarCantidad(e, index, lon) {
+      const regex = new RegExp(`^[0-9]{0,${lon}}$`, "g");
       this.rojitoClientes = false;
 
+      if(this.formPedidos.productoSeleccionado.cantidad == undefined){
+        e.preventDefault();
+        return false;
+      }
+      if (parseInt(`${this.formPedidos[index]}${e.key}`) > parseInt(this.formPedidos.productoSeleccionado.cantidad)) {
+        this.formPedidos[index]=this.formPedidos.productoSeleccionado.cantidad;
+        e.preventDefault();
+        return false;
+      }
       if (!regex.test(`${this.formPedidos[index]}${e.key}`)) {
         this.rojitoClientes = true;
         e.preventDefault();
@@ -362,5 +387,10 @@ new Vue({
         return false;
       });
     },
+
+    formatoNumeroPrecioProducto: () => (precio) => {
+    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(precio);
+    }
+
   },
 });

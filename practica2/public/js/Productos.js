@@ -22,6 +22,7 @@ new Vue({
     nuevoP: 0,
     estadoP: true,
     rojitoClientes: false,
+    conFormato:0
   },
   mounted() {
     this.getProductos();
@@ -29,11 +30,24 @@ new Vue({
   methods: {
     async nuevoProducto(id) {
       this.nuevoP = id;
+
+      this.formProductos.nombre = "";
+      this.formProductos.codigo = 0;
+      this.formProductos.cantidad = 0;
+      this.formProductos.precio = 0;
+      this.formProductos.categoria = "";
+      this.formProductos.estado = "";
     },
 
     async getProductos() {
       let productos = await axios.get("productoJSON");
       this.productos = productos.data.productos;
+      this.conFormato=98652;
+
+      console.log(new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(this.conFormato));
+      this.conFormato=new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(this.conFormato);
+      // expected output: "123.456,79 €"
+
     },
 
     async crearProducto() {
@@ -130,6 +144,7 @@ new Vue({
     },
 
     validarCantidad(e, index, lon) {
+      console.log(e);
       const regex = new RegExp(`^[0-9]{0,${lon}}$`, "g");
       this.rojitoClientes = false;
 
@@ -177,6 +192,14 @@ new Vue({
       }
       return true;
     },
+
+
+    
   },
-  computed: {},
+  computed: {
+
+    formatoNumeroPrecioProducto: () => (precio) => {
+      return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(precio);
+    }
+  },
 });
