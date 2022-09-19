@@ -358,7 +358,7 @@ let conse = 0;
 
 									<td>${producto.codigo}</td>
 
-									<td>${producto.precio}</td>
+									<td> ${formatoNumeroPrecioProducto(producto.precio)}  </td>
 
 									<td>${producto.cantidadProducto}</td>
 
@@ -370,7 +370,7 @@ let conse = 0;
 
 						<div style="text-align:center; background-color:green; color:aliceblue">
 
-							Total Pedido:   ${pedidoModal.totalPedido}
+							Total Pedido:   ${formatoNumeroPrecioProducto(pedidoModal.totalPedido)}  
 						</div>
 
 						<br>

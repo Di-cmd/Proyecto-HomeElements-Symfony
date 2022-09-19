@@ -233,7 +233,7 @@ const crearProducto = "{{ path('crearProducto') }}";
 										<td>${pedido.departamento}</td>
 										<td>${pedido.municipio}</td>
 										<td>
-											$ ${pedido.totalPedido} pesos
+											${formatoNumeroPrecioProducto(pedido.totalPedido)}
 										</td>
 									</tr>
 								</tbody>

@@ -255,5 +255,12 @@ new Vue({
     },
   },
 
-  computed: {},
+  computed: {
+
+    formatoNumeroPrecioProducto: () => (precio) => {
+      return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'COP' }).format(precio);
+    }
+
+    
+  },
 });
